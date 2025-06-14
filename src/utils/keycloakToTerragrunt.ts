@@ -1166,10 +1166,8 @@ variable "user_federation" {
     kerberos_providers = optional(list(object({
       name                     = string
       realm                    = string
-      principal                = string
-      keytab                   = string
-      server_principal         = optional(string)
-      key_tab                  = optional(string)
+      server_principal         = string
+      key_tab                  = string
       debug                    = optional(bool, false)
       allow_password_authentication = optional(bool, false)
       update_profile_first_login = optional(bool, true)
@@ -1236,7 +1234,6 @@ variable "client_profiles" {
   }))
   default = []
 }`;
-}
 
 // Generate outputs for the main realm module
 function generateRealmOutputs(): string {
@@ -2104,10 +2101,16 @@ function generateAuthenticationFlowsOutputs(): string {
 }
 
 function generateUserFederationModule(components: any[], realm: string): string {
-  return `# User Federation for realm: ${realm}
-resource "keycloak_ldap_user_federation" "ldap_providers" {
-  for_each = { for provider in var.user_federation.ldap_providers : provider.name => provider }
-  
+  let terraform = `# User Federation for realm: ${realm}\n`;
+
+  const ldapProviders = (components || []).filter(c => c.providerId === 'ldap');
+  ldapProviders.forEach((provider: any) => {
+    const config = provider.config || {};
+    const sanitizedName = provider.name.replace(/[^a-zA-Z0-9_]/g, '_');
+    terraform += `
+resource "keycloak_ldap_user_federation" "${sanitizedName}" {
+  for_each = { for p in var.user_federation.ldap_providers: p.name => p if p.name == "${provider.name}" }
+
   realm_id    = var.realm_id
   name        = each.value.name
   enabled     = each.value.enabled
@@ -2133,10 +2136,16 @@ resource "keycloak_ldap_user_federation" "ldap_providers" {
   full_sync_period        = each.value.full_sync_period
   changed_sync_period     = each.value.changed_sync_period
 }
+`;
+  });
 
-resource "keycloak_custom_user_federation" "kerberos_providers" {
-  for_each = { for provider in var.user_federation.kerberos_providers : provider.name => provider }
-  
+  const kerberosProviders = (components || []).filter(c => c.providerId === 'kerberos');
+  kerberosProviders.forEach((provider: any) => {
+    const sanitizedName = provider.name.replace(/[^a-zA-Z0-9_]/g, '_');
+    terraform += `
+resource "keycloak_custom_user_federation" "${sanitizedName}" {
+  for_each = { for p in var.user_federation.kerberos_providers: p.name => p if p.name == "${provider.name}" }
+
   realm_id    = var.realm_id
   name        = each.value.name
   provider_id = "kerberos"
@@ -2150,7 +2159,11 @@ resource "keycloak_custom_user_federation" "kerberos_providers" {
     allowPasswordAuthentication = each.value.allow_password_authentication ? "true" : "false"
     updateProfileFirstLogin = each.value.update_profile_first_login ? "true" : "false"
   }
-}`;
+}
+`;
+  });
+
+  return terraform;
 }
 
 function generateUserFederationVariables(): string {
