@@ -1234,6 +1234,7 @@ variable "client_profiles" {
   }))
   default = []
 }`;
+}
 
 // Generate outputs for the main realm module
 function generateRealmOutputs(): string {
@@ -1408,7 +1409,8 @@ function generateRolesOutputs(): string {
       }
     }
   }
-}`;
+}
+`;
 }
 
 function generateGroupsModule(groups: any[], realm: string): string {
@@ -1459,7 +1461,8 @@ function generateGroupsOutputs(): string {
       parent_id = group.parent_id
     }
   }
-}`;
+}
+`;
 }
 
 function generateUsersModule(users: any[], realm: string): string {
@@ -1543,7 +1546,8 @@ function generateUsersOutputs(): string {
       email    = user.email
     }
   }
-}`;
+}
+`;
 }
 
 function generateClientsModule(clients: any[], realm: string): string {
@@ -1623,7 +1627,8 @@ function generateClientsOutputs(): string {
       name      = client.name
     }
   }
-}`;
+}
+`;
 }
 
 function generateClientScopesModule(clientScopes: any[], realm: string): string {
@@ -1676,7 +1681,8 @@ function generateClientScopesOutputs(): string {
       description = scope.description
     }
   }
-}`;
+}
+`;
 }
 
 function generateProtocolMappersModule(json: any, realm: string): string {
@@ -1806,7 +1812,8 @@ function generateProtocolMappersOutputs(): string {
       }
     }
   }
-}`;
+}
+`;
 }
 
 function generateScopeMappingsModule(scopeMappings: any[], realm: string): string {
@@ -1848,7 +1855,8 @@ function generateScopeMappingsOutputs(): string {
       role_id   = mapping.role_id
     }
   }
-}`;
+}
+`;
 }
 
 function generateIdentityProvidersModule(identityProviders: any[], realm: string): string {
@@ -1960,7 +1968,8 @@ function generateIdentityProvidersOutputs(): string {
       }
     }
   )
-}`;
+}
+`;
 }
 
 function generateIdentityProviderMappersModule(identityProviders: any[], realm: string): string {
@@ -2014,7 +2023,8 @@ function generateIdentityProviderMappersOutputs(): string {
       mapper_type            = mapper.mapper_type
     }
   }
-}`;
+}
+`;
 }
 
 function generateAuthenticationFlowsModule(authenticationFlows: any[], realm: string): string {
@@ -2097,7 +2107,8 @@ function generateAuthenticationFlowsOutputs(): string {
       description = flow.description
     }
   }
-}`;
+}
+`;
 }
 
 function generateUserFederationModule(components: any[], realm: string): string {
@@ -2227,7 +2238,8 @@ function generateUserFederationOutputs(): string {
       }
     }
   }
-}`;
+}
+`;
 }
 
 function generateRequiredActionsModule(requiredActions: any[], realm: string): string {
@@ -2273,7 +2285,8 @@ function generateRequiredActionsOutputs(): string {
       name   = action.name
     }
   }
-}`;
+}
+`;
 }
 
 function generateRealmEventsModule(json: any, realm: string): string {
@@ -2321,7 +2334,8 @@ function generateRealmEventsOutputs(): string {
     events_enabled = keycloak_realm_events.events.events_enabled
     admin_events_enabled = keycloak_realm_events.events.admin_events_enabled
   }
-}`;
+}
+`;
 }
 
 function generateClientPoliciesModule(json: any, realm: string): string {
@@ -2387,7 +2401,8 @@ function generateClientPoliciesOutputs(): string {
       name = policy.name
     }
   }
-}`;
+}
+`;
 }
 
 function generateKeycloakMain(): string {
@@ -2431,7 +2446,8 @@ function generateKeycloakOutputs(): string {
   return `output "keycloak_url" {
   description = "Keycloak server URL"
   value       = var.keycloak_url
-}`;
+}
+`;
 }
 
 /**
