@@ -67,7 +67,12 @@ const Index = () => {
         return { fileName: f.name, terragruntFiles: [], error: "Not a valid Keycloak realm.json" };
       try {
         const terragruntFiles = keycloakRealmJsonToTerragrunt(f.parsed, f.name);
-        return { fileName: f.name, terragruntFiles };
+        // Add the parsed JSON data to each terraform file for resource analysis
+        const enhancedTerragruntFiles = terragruntFiles.map(tf => ({
+          ...tf,
+          parsed: f.parsed
+        }));
+        return { fileName: f.name, terragruntFiles: enhancedTerragruntFiles };
       } catch (err: any) {
         return { fileName: f.name, terragruntFiles: [], error: "Conversion failed" };
       }
