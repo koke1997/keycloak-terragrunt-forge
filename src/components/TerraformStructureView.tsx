@@ -7,7 +7,8 @@ import { ExecutionFlow } from "./ExecutionFlow";
 import { ResourceOverview } from "./ResourceOverview";
 import { AnimatedExecutionFlow } from "./AnimatedExecutionFlow";
 import { FileExecutionVisualizer } from "./FileExecutionVisualizer";
-import { Folder, Eye, GitBranch, Play, ArrowRight } from "lucide-react";
+import { TerraformDebugger } from "./TerraformDebugger";
+import { Folder, Eye, GitBranch, Play, ArrowRight, Bug } from "lucide-react";
 
 interface TerraformFile {
   filePath: string;
@@ -53,7 +54,7 @@ export function TerraformStructureView({ terragruntFiles, realmName, onViewFile 
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-6">
+            <TabsList className="grid w-full grid-cols-7">
               <TabsTrigger value="overview" className="flex items-center gap-2">
                 <Eye className="w-4 h-4" />
                 Overview
@@ -69,6 +70,10 @@ export function TerraformStructureView({ terragruntFiles, realmName, onViewFile 
               <TabsTrigger value="animated-flow" className="flex items-center gap-2">
                 <Play className="w-4 h-4" />
                 Animated Flow
+              </TabsTrigger>
+              <TabsTrigger value="debugger" className="flex items-center gap-2">
+                <Bug className="w-4 h-4" />
+                Debugger
               </TabsTrigger>
               <TabsTrigger value="file-order" className="flex items-center gap-2">
                 <ArrowRight className="w-4 h-4" />
@@ -94,6 +99,10 @@ export function TerraformStructureView({ terragruntFiles, realmName, onViewFile 
 
             <TabsContent value="animated-flow" className="mt-6">
               <AnimatedExecutionFlow terragruntFiles={terragruntFiles} realmName={realmName} />
+            </TabsContent>
+
+            <TabsContent value="debugger" className="mt-6">
+              <TerraformDebugger terragruntFiles={terragruntFiles} realmName={realmName} />
             </TabsContent>
 
             <TabsContent value="file-order" className="mt-6">
