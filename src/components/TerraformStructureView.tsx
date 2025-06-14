@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ModuleDependencyGraph } from "./ModuleDependencyGraph";
 import { ExecutionFlow } from "./ExecutionFlow";
 import { ResourceOverview } from "./ResourceOverview";
-import { Folder, Eye, GitBranch, Play } from "lucide-react";
+import { AnimatedExecutionFlow } from "./AnimatedExecutionFlow";
+import { FileExecutionVisualizer } from "./FileExecutionVisualizer";
+import { Folder, Eye, GitBranch, Play, ArrowRight } from "lucide-react";
 
 interface TerraformFile {
   filePath: string;
