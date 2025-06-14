@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ModuleDependencyGraph } from "./ModuleDependencyGraph";
 import { ExecutionFlow } from "./ExecutionFlow";
 import { ResourceOverview } from "./ResourceOverview";
-import { FileTree, Eye, GitBranch, Play } from "lucide-react";
+import { Folder, Eye, GitBranch, Play } from "lucide-react";
 
 interface TerraformFile {
   filePath: string;
@@ -46,7 +46,7 @@ export function TerraformStructureView({ terragruntFiles, realmName, onViewFile 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <FileTree className="w-5 h-5" />
+            <Folder className="w-5 h-5" />
             Terraform Project Structure
           </CardTitle>
         </CardHeader>
@@ -66,7 +66,7 @@ export function TerraformStructureView({ terragruntFiles, realmName, onViewFile 
                 Execution
               </TabsTrigger>
               <TabsTrigger value="files" className="flex items-center gap-2">
-                <FileTree className="w-4 h-4" />
+                <Folder className="w-4 h-4" />
                 File Tree
               </TabsTrigger>
             </TabsList>
@@ -93,7 +93,7 @@ export function TerraformStructureView({ terragruntFiles, realmName, onViewFile 
                     {Object.entries(fileTree).map(([dir, files]) => (
                       <div key={dir} className="space-y-2">
                         <div className="font-medium text-sm text-gray-700 flex items-center gap-2">
-                          <FileTree className="w-4 h-4" />
+                          <Folder className="w-4 h-4" />
                           {dir === 'root' ? '📁 /' : `📁 ${dir}/`}
                         </div>
                         <div className="ml-6 space-y-1">
