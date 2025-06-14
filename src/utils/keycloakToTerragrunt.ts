@@ -1,22 +1,45 @@
 
 /**
  * Converts a keycloak JSON realm file into a mock Terragrunt representation.
- * This is NOT real Terragrunt code, replace with your logic as needed!
  */
 export function keycloakRealmJsonToTerragrunt(json: any, fileName: string): string {
-  // Here you should implement a real mapping from realm.json to Terragrunt
-  // For demonstration, we'll just pretty-print the realm name and user count.
-  const realm = json.realm || "unknown";
-  let userCount = 0;
-  if (Array.isArray(json.users)) userCount = json.users.length;
+  // Check if valid
+  if (!json || typeof json !== "object" || !json.realm) {
+    return `# Could not parse realm file: missing "realm" property`;
+  }
 
-  return `# Terragrunt code generated for ${fileName}
+  const realm = json.realm;
+  const displayName = json.displayName || "";
+  const enabled = typeof json.enabled === "boolean" ? json.enabled : true;
+
+  let terragrunt = `# Terragrunt code generated for ${fileName}
 resource "keycloak_realm" "${realm}" {
-  realm = "${realm}"
-  // Users: ${userCount}
-  // ...etc
-}
+  realm        = "${realm}"
+  display_name = "${displayName}"
+  enabled      = ${enabled}
 `;
+
+  // Users example (produce a user resource for each user)
+  if (Array.isArray(json.users) && json.users.length > 0) {
+    terragrunt += "\n  # Users in this realm\n";
+    json.users.forEach((user: any, idx: number) => {
+      const userName = user.username || `user_${idx}`;
+      terragrunt += 
+      `  resource "keycloak_user" "${userName}" {
+    realm_id = keycloak_realm.${realm}.id
+    username = "${userName}"`;
+      if (user.email) {
+        terragrunt += `\n    email = "${user.email}"`;
+      }
+      terragrunt += "\n  }\n";
+    });
+  } else {
+    terragrunt += "  # No users found in this realm\n";
+  }
+
+  terragrunt += "}\n";
+
+  return terragrunt;
 }
 
 /**
@@ -25,3 +48,4 @@ resource "keycloak_realm" "${realm}" {
 export function isValidKeycloakJson(json: any): boolean {
   return typeof json === "object" && !!json.realm;
 }
+
