@@ -2103,18 +2103,15 @@ function generateAuthenticationFlowsOutputs(): string {
 function generateUserFederationModule(components: any[], realm: string): string {
   let terraform = `# User Federation for realm: ${realm}\n`;
 
-  const ldapProviders = (components || []).filter(c => c.providerId === 'ldap');
-  ldapProviders.forEach((provider: any) => {
-    const config = provider.config || {};
-    const sanitizedName = provider.name.replace(/[^a-zA-Z0-9_]/g, '_');
+  if ((components || []).some(c => c.providerId === 'ldap')) {
     terraform += `
-resource "keycloak_ldap_user_federation" "${sanitizedName}" {
-  for_each = { for p in var.user_federation.ldap_providers: p.name => p if p.name == "${provider.name}" }
+resource "keycloak_ldap_user_federation" "ldap_providers" {
+  for_each = { for p in var.user_federation.ldap_providers : p.name => p }
 
-  realm_id    = var.realm_id
-  name        = each.value.name
-  enabled     = each.value.enabled
-  priority    = each.value.priority
+  realm_id                = var.realm_id
+  name                    = each.value.name
+  enabled                 = each.value.enabled
+  priority                = each.value.priority
   
   import_enabled          = each.value.import_enabled
   edit_mode               = each.value.edit_mode
@@ -2137,14 +2134,12 @@ resource "keycloak_ldap_user_federation" "${sanitizedName}" {
   changed_sync_period     = each.value.changed_sync_period
 }
 `;
-  });
+  }
 
-  const kerberosProviders = (components || []).filter(c => c.providerId === 'kerberos');
-  kerberosProviders.forEach((provider: any) => {
-    const sanitizedName = provider.name.replace(/[^a-zA-Z0-9_]/g, '_');
+  if ((components || []).some(c => c.providerId === 'kerberos')) {
     terraform += `
-resource "keycloak_custom_user_federation" "${sanitizedName}" {
-  for_each = { for p in var.user_federation.kerberos_providers: p.name => p if p.name == "${provider.name}" }
+resource "keycloak_custom_user_federation" "kerberos_providers" {
+  for_each = { for p in var.user_federation.kerberos_providers : p.name => p }
 
   realm_id    = var.realm_id
   name        = each.value.name
@@ -2161,8 +2156,7 @@ resource "keycloak_custom_user_federation" "${sanitizedName}" {
   }
 }
 `;
-  });
-
+  }
   return terraform;
 }
 
