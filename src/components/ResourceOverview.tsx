@@ -340,10 +340,10 @@ function getFilesForResourceType(resourceType: string, files: TerraformFile[]): 
   const foundFiles: string[] = [];
   
   files.forEach(file => {
-    // Check for Terraform resource patterns
+    // Check for Terraform resource patterns - more specific matching
     const hasResources = hasResourceTypeInContent(resourceType, file.content);
     
-    // Check for JSON data
+    // Check for JSON data - more specific matching
     const hasJsonData = file.parsed && hasResourceTypeInJson(resourceType, file.parsed);
     
     if (hasResources || hasJsonData) {
