@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Shield, Download, Info } from "lucide-react";
+import { Shield, Download, Info, Building2 } from "lucide-react";
 import { 
   germanComplianceRequirements, 
   realmTemplates, 
@@ -21,28 +21,24 @@ interface ComplianceTemplateSelectorProps {
 }
 
 const industries = [
-  { value: 'all', label: 'Alle Branchen' },
-  { value: 'finance', label: 'Finanzwesen' },
-  { value: 'health', label: 'Gesundheitswesen' },
-  { value: 'energy', label: 'Energiewirtschaft' },
-  { value: 'government', label: 'Öffentlicher Sektor' },
-  { value: 'transport', label: 'Verkehrswesen' },
-  { value: 'water', label: 'Wasserversorgung' },
-  { value: 'food', label: 'Lebensmittelindustrie' },
-  { value: 'accounting', label: 'Buchhaltung' },
-  { value: 'medical', label: 'Medizintechnik' }
+  { value: 'all', label: 'Alle Finanz-/Rechnungswesen', icon: '🏢' },
+  { value: 'banking', label: 'Bankwesen', icon: '🏦' },
+  { value: 'accounting', label: 'Buchhaltung', icon: '📊' },
+  { value: 'finance', label: 'Finanzdienstleistungen', icon: '💰' },
+  { value: 'insurance', label: 'Versicherungen', icon: '🛡️' },
+  { value: 'investment', label: 'Wertpapierhandel', icon: '📈' },
+  { value: 'tax_consulting', label: 'Steuerberatung', icon: '📋' }
 ];
 
 const severityColors = {
-  low: 'bg-green-100 text-green-800',
-  medium: 'bg-yellow-100 text-yellow-800',
-  high: 'bg-orange-100 text-orange-800',
-  critical: 'bg-red-100 text-red-800'
+  low: 'bg-green-100 text-green-800 border-green-300',
+  medium: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+  high: 'bg-orange-100 text-orange-800 border-orange-300',
+  critical: 'bg-red-100 text-red-800 border-red-300'
 };
 
 export function ComplianceTemplateSelector({ onTemplateSelect }: ComplianceTemplateSelectorProps) {
   const [selectedIndustry, setSelectedIndustry] = useState<string>('all');
-  const [selectedCompliance, setSelectedCompliance] = useState<string[]>([]);
 
   const filteredTemplates = selectedIndustry === 'all' 
     ? realmTemplates 
@@ -51,14 +47,6 @@ export function ComplianceTemplateSelector({ onTemplateSelect }: ComplianceTempl
   const relevantCompliance = selectedIndustry === 'all' 
     ? germanComplianceRequirements 
     : getComplianceByIndustry(selectedIndustry);
-
-  const handleComplianceToggle = (complianceId: string) => {
-    setSelectedCompliance(prev => 
-      prev.includes(complianceId) 
-        ? prev.filter(id => id !== complianceId)
-        : [...prev, complianceId]
-    );
-  };
 
   const handleTemplateSelect = (template: RealmTemplate) => {
     const templateWithMetadata = {
@@ -70,7 +58,7 @@ export function ComplianceTemplateSelector({ onTemplateSelect }: ComplianceTempl
           'generated_by': 'lovable-compliance-generator',
           'generated_date': new Date().toISOString(),
           'selected_industry': selectedIndustry,
-          'selected_compliance': selectedCompliance.join(',')
+          'compliance_focus': 'accounting_finance'
         }
       }
     };
@@ -81,33 +69,36 @@ export function ComplianceTemplateSelector({ onTemplateSelect }: ComplianceTempl
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">
-          <Shield className="w-6 h-6" />
-          Deutsche Compliance-Vorlagen
+          <Building2 className="w-6 h-6" />
+          Finanz- & Rechnungswesen Compliance
         </h2>
         <p className="text-muted-foreground">
-          Vorkonfigurierte Keycloak-Realm-Vorlagen für deutsche Gesetze und Branchenstandards
+          Spezialisierte Keycloak-Vorlagen für deutsche Finanz- und Rechnungswesengesetze
         </p>
       </div>
 
-      <Alert>
-        <Info className="h-4 w-4" />
-        <AlertDescription>
-          <strong>Rechtlicher Hinweis:</strong> Diese Vorlagen bieten eine grundlegende Compliance-Konfiguration. 
-          Konsultieren Sie immer einen Rechtsexperten für vollständige rechtliche Beratung.
+      <Alert className="border-blue-200 bg-blue-50">
+        <Info className="h-4 w-4 text-blue-600" />
+        <AlertDescription className="text-blue-800">
+          <strong>Branchenfokus:</strong> Diese Vorlagen sind speziell für Finanzdienstleister, 
+          Banken, Versicherungen, Buchhaltung und Steuerberatung entwickelt worden.
         </AlertDescription>
       </Alert>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-2">Branche auswählen:</label>
+          <label className="block text-sm font-medium mb-2">Finanzbereich auswählen:</label>
           <Select value={selectedIndustry} onValueChange={setSelectedIndustry}>
             <SelectTrigger>
-              <SelectValue placeholder="Branche wählen" />
+              <SelectValue placeholder="Bereich wählen" />
             </SelectTrigger>
             <SelectContent>
               {industries.map(industry => (
                 <SelectItem key={industry.value} value={industry.value}>
-                  {industry.label}
+                  <span className="flex items-center gap-2">
+                    <span>{industry.icon}</span>
+                    {industry.label}
+                  </span>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -117,40 +108,40 @@ export function ComplianceTemplateSelector({ onTemplateSelect }: ComplianceTempl
 
       <Tabs defaultValue="templates" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="templates">Vorlagen</TabsTrigger>
-          <TabsTrigger value="compliance">Compliance-Anforderungen</TabsTrigger>
+          <TabsTrigger value="templates">Compliance-Vorlagen</TabsTrigger>
+          <TabsTrigger value="regulations">Gesetzesgrundlagen</TabsTrigger>
         </TabsList>
         
         <TabsContent value="templates" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredTemplates.map(template => (
-              <Card key={template.id} className="hover:shadow-lg transition-shadow">
+              <Card key={template.id} className="hover:shadow-lg transition-shadow border-l-4 border-l-blue-500">
                 <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
+                  <CardTitle className="flex items-center justify-between text-lg">
                     {template.name}
                     <Button
                       size="sm"
                       onClick={() => handleTemplateSelect(template)}
-                      className="ml-2"
+                      className="ml-2 bg-blue-600 hover:bg-blue-700"
                     >
                       <Download className="w-4 h-4 mr-1" />
                       Verwenden
                     </Button>
                   </CardTitle>
-                  <CardDescription>{template.description}</CardDescription>
+                  <CardDescription className="text-sm">{template.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div>
-                      <p className="text-sm font-medium mb-1">Compliance:</p>
-                      <div className="flex flex-wrap gap-1">
+                      <p className="text-sm font-medium mb-2">Compliance-Gesetze:</p>
+                      <div className="flex flex-wrap gap-2">
                         {template.compliance.map(comp => {
                           const requirement = germanComplianceRequirements.find(r => r.id === comp);
                           return (
                             <Badge 
                               key={comp} 
                               variant="outline"
-                              className={requirement ? severityColors[requirement.severity] : ''}
+                              className={`${requirement ? severityColors[requirement.severity] : 'bg-gray-100'} text-xs`}
                             >
                               {requirement?.name || comp}
                             </Badge>
@@ -159,14 +150,20 @@ export function ComplianceTemplateSelector({ onTemplateSelect }: ComplianceTempl
                       </div>
                     </div>
                     <div>
-                      <p className="text-sm font-medium mb-1">Branchen:</p>
-                      <div className="flex flex-wrap gap-1">
+                      <p className="text-sm font-medium mb-2">Anwendungsbereich:</p>
+                      <div className="flex flex-wrap gap-2">
                         {template.industries.map(industry => (
-                          <Badge key={industry} variant="secondary">
+                          <Badge key={industry} variant="secondary" className="text-xs">
                             {industries.find(i => i.value === industry)?.label || industry}
                           </Badge>
                         ))}
                       </div>
+                    </div>
+                    <div className="mt-3 p-3 bg-gray-50 rounded-md">
+                      <p className="text-xs text-gray-600">
+                        <strong>Sicherheitsfeatures:</strong> 2FA, erweiterte Passwort-Richtlinien, 
+                        Audit-Logging, Sitzungstimeouts
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -175,23 +172,28 @@ export function ComplianceTemplateSelector({ onTemplateSelect }: ComplianceTempl
           </div>
         </TabsContent>
 
-        <TabsContent value="compliance" className="space-y-4">
+        <TabsContent value="regulations" className="space-y-4">
           <div className="grid grid-cols-1 gap-4">
             {relevantCompliance.map(requirement => (
               <Card key={requirement.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
-                    {requirement.name}
+                    <span className="flex items-center gap-2">
+                      <Shield className="w-5 h-5" />
+                      {requirement.name}
+                    </span>
                     <Badge className={severityColors[requirement.severity]}>
-                      {requirement.severity}
+                      {requirement.severity === 'critical' ? 'Kritisch' : 
+                       requirement.severity === 'high' ? 'Hoch' : 
+                       requirement.severity === 'medium' ? 'Mittel' : 'Niedrig'}
                     </Badge>
                   </CardTitle>
                   <CardDescription>{requirement.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div>
-                      <p className="text-sm font-medium mb-1">Anforderungen:</p>
+                      <p className="text-sm font-medium mb-2">Kernanforderungen:</p>
                       <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
                         {requirement.requirements.map((req, index) => (
                           <li key={index}>{req}</li>
@@ -199,10 +201,22 @@ export function ComplianceTemplateSelector({ onTemplateSelect }: ComplianceTempl
                       </ul>
                     </div>
                     <div>
-                      <p className="text-sm font-medium mb-1">Datentypen:</p>
-                      <div className="flex flex-wrap gap-1">
+                      <p className="text-sm font-medium mb-2">Betroffene Datentypen:</p>
+                      <div className="flex flex-wrap gap-2">
                         {requirement.dataTypes.map(type => (
-                          <Badge key={type} variant="outline">{type}</Badge>
+                          <Badge key={type} variant="outline" className="text-xs">
+                            {type.replace('_', ' ')}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium mb-2">Anwendbare Branchen:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {requirement.industry.map(ind => (
+                          <Badge key={ind} variant="secondary" className="text-xs">
+                            {industries.find(i => i.value === ind)?.label || ind}
+                          </Badge>
                         ))}
                       </div>
                     </div>

@@ -23,8 +23,8 @@ export const germanComplianceRequirements: ComplianceRequirement[] = [
     id: 'gdpr',
     name: 'DSGVO/GDPR',
     description: 'Datenschutz-Grundverordnung - EU General Data Protection Regulation',
-    industry: ['all'],
-    dataTypes: ['personal', 'sensitive', 'biometric'],
+    industry: ['finance', 'accounting', 'banking', 'insurance'],
+    dataTypes: ['personal', 'financial', 'customer_data'],
     requirements: [
       'Einwilligung für Datenverarbeitung',
       'Recht auf Vergessenwerden',
@@ -35,121 +35,107 @@ export const germanComplianceRequirements: ComplianceRequirement[] = [
     severity: 'critical'
   },
   {
-    id: 'bdsg',
-    name: 'BDSG',
-    description: 'Bundesdatenschutzgesetz - German Federal Data Protection Act',
-    industry: ['all'],
-    dataTypes: ['personal', 'employee'],
-    requirements: [
-      'Verarbeitungsverzeichnis',
-      'Datenschutzbeauftragte/r',
-      'Technische und organisatorische Maßnahmen'
-    ],
-    severity: 'high'
-  },
-  {
-    id: 'kritis',
-    name: 'KRITIS',
-    description: 'Kritische Infrastrukturen - Critical Infrastructure Protection',
-    industry: ['energy', 'water', 'food', 'health', 'transport', 'finance'],
-    dataTypes: ['operational', 'critical_systems'],
-    requirements: [
-      'IT-Sicherheitskatalog',
-      'Meldepflicht bei Störungen',
-      'Zwei-Jahres-Nachweis',
-      'Angemessene IT-Sicherheit'
-    ],
-    severity: 'critical'
-  },
-  {
-    id: 'bsi_grundschutz',
-    name: 'BSI IT-Grundschutz',
-    description: 'BSI IT Security Basic Protection',
-    industry: ['government', 'public', 'finance', 'health'],
-    dataTypes: ['confidential', 'internal'],
-    requirements: [
-      'Informationssicherheitsmanagement',
-      'Risikoanalyse',
-      'Sicherheitskonzept',
-      'Notfallvorsorge'
-    ],
-    severity: 'high'
-  },
-  {
     id: 'gobd',
     name: 'GoBD',
     description: 'Grundsätze zur ordnungsmäßigen Führung von Büchern - Accounting Compliance',
-    industry: ['finance', 'accounting', 'all'],
-    dataTypes: ['financial', 'tax_relevant'],
+    industry: ['finance', 'accounting', 'banking'],
+    dataTypes: ['financial', 'tax_relevant', 'accounting_records'],
     requirements: [
       'Unveränderbarkeit von Buchungen',
       'Vollständigkeit der Aufzeichnungen',
       'Zeitgerechte Buchungen',
-      'Ordnung und Nachvollziehbarkeit'
-    ],
-    severity: 'medium'
-  },
-  {
-    id: 'hipaa_de',
-    name: 'Medizinprodukte-Verordnung (MDR)',
-    description: 'Medical Device Regulation for Healthcare Data',
-    industry: ['health', 'medical'],
-    dataTypes: ['health', 'medical_records', 'patient'],
-    requirements: [
-      'Patientendaten-Schutz',
-      'Medizinische Geräte-Sicherheit',
-      'Klinische Bewertung',
-      'Post-Market Surveillance'
+      'Ordnung und Nachvollziehbarkeit',
+      '10-jährige Aufbewahrungspflicht'
     ],
     severity: 'critical'
+  },
+  {
+    id: 'kwg',
+    name: 'KWG',
+    description: 'Kreditwesengesetz - German Banking Act',
+    industry: ['banking', 'finance'],
+    dataTypes: ['banking_data', 'credit_information', 'financial_transactions'],
+    requirements: [
+      'Bankgeheimnis',
+      'Geldwäscheprävention',
+      'Kreditrisikomanagement',
+      'Meldepflichten an BaFin',
+      'Mindestkapitalanforderungen'
+    ],
+    severity: 'critical'
+  },
+  {
+    id: 'vag',
+    name: 'VAG',
+    description: 'Versicherungsaufsichtsgesetz - Insurance Supervision Act',
+    industry: ['insurance', 'finance'],
+    dataTypes: ['insurance_data', 'policy_information', 'claims_data'],
+    requirements: [
+      'Solvabilität II Compliance',
+      'Versicherungsgeheimnis',
+      'Risikomanagementsystem',
+      'Governance-Anforderungen',
+      'Berichterstattung an BaFin'
+    ],
+    severity: 'critical'
+  },
+  {
+    id: 'mifid',
+    name: 'MiFID II',
+    description: 'Markets in Financial Instruments Directive - Wertpapierhandelsgesetz',
+    industry: ['finance', 'investment', 'banking'],
+    dataTypes: ['trading_data', 'investment_records', 'client_information'],
+    requirements: [
+      'Anlegerschutz',
+      'Transparenzanforderungen',
+      'Aufzeichnungspflichten',
+      'Best Execution',
+      'Interessenkonflikte vermeiden'
+    ],
+    severity: 'high'
+  },
+  {
+    id: 'aml',
+    name: 'GwG',
+    description: 'Geldwäschegesetz - Anti-Money Laundering Act',
+    industry: ['banking', 'finance', 'insurance'],
+    dataTypes: ['transaction_data', 'customer_due_diligence', 'suspicious_activities'],
+    requirements: [
+      'Kundenidentifizierung (KYC)',
+      'Verdachtsmeldungen',
+      'Risikobewertung',
+      'Aufzeichnungspflichten',
+      'Mitarbeiterschulungen'
+    ],
+    severity: 'critical'
+  },
+  {
+    id: 'steuergesetze',
+    name: 'Steuergesetze',
+    description: 'Deutsche Steuergesetze - German Tax Laws',
+    industry: ['accounting', 'finance', 'tax_consulting'],
+    dataTypes: ['tax_data', 'financial_statements', 'deductible_expenses'],
+    requirements: [
+      'Steuerliche Buchführungspflicht',
+      'Umsatzsteuermeldungen',
+      'Jahresabschluss',
+      'Betriebsprüfung Vorbereitung',
+      'Digitale Schnittstelle ELSTER'
+    ],
+    severity: 'high'
   }
 ];
 
 export const realmTemplates: RealmTemplate[] = [
   {
-    id: 'gdpr_basic',
-    name: 'DSGVO Basis-Konfiguration',
-    description: 'Grundlegende DSGVO-konforme Keycloak-Konfiguration',
-    compliance: ['gdpr', 'bdsg'],
-    industries: ['all'],
+    id: 'banking_kwg_compliant',
+    name: 'Banking KWG Compliance',
+    description: 'Vollständig KWG-konforme Konfiguration für Banken und Kreditinstitute',
+    compliance: ['kwg', 'gdpr', 'aml', 'mifid'],
+    industries: ['banking', 'finance'],
     template: {
-      realm: 'gdpr-compliant-realm',
-      displayName: 'DSGVO Konforme Anwendung',
-      enabled: true,
-      userManagedAccessAllowed: true,
-      registrationAllowed: true,
-      registrationEmailAsUsername: true,
-      rememberMe: false,
-      verifyEmail: true,
-      loginWithEmailAllowed: true,
-      duplicateEmailsAllowed: false,
-      resetPasswordAllowed: true,
-      editUsernameAllowed: false,
-      bruteForceProtected: true,
-      maxFailureWaitSeconds: 900,
-      minimumQuickLoginWaitSeconds: 60,
-      waitIncrementSeconds: 60,
-      quickLoginCheckMilliSeconds: 1000,
-      maxDeltaTimeSeconds: 43200,
-      failureFactor: 30,
-      passwordPolicy: "length(12) and digits(2) and lowerCase(2) and upperCase(2) and specialChars(2) and notUsername and notEmail",
-      attributes: {
-        'gdpr.data_retention_days': '2555', // 7 years
-        'gdpr.consent_required': 'true',
-        'gdpr.right_to_be_forgotten': 'true',
-        'privacy.data_processing_purpose': 'Authentication and Authorization'
-      }
-    }
-  },
-  {
-    id: 'kritis_secure',
-    name: 'KRITIS Sichere Konfiguration',
-    description: 'Hochsichere Konfiguration für kritische Infrastrukturen',
-    compliance: ['kritis', 'bsi_grundschutz', 'gdpr'],
-    industries: ['energy', 'water', 'transport', 'finance'],
-    template: {
-      realm: 'kritis-secure-realm',
-      displayName: 'KRITIS Sichere Anwendung',
+      realm: 'banking-kwg-realm',
+      displayName: 'Bank Compliance System',
       enabled: true,
       sslRequired: 'all',
       userManagedAccessAllowed: false,
@@ -161,36 +147,74 @@ export const realmTemplates: RealmTemplate[] = [
       resetPasswordAllowed: false,
       editUsernameAllowed: false,
       bruteForceProtected: true,
-      maxFailureWaitSeconds: 1800,
-      minimumQuickLoginWaitSeconds: 300,
-      waitIncrementSeconds: 120,
-      quickLoginCheckMilliSeconds: 500,
-      maxDeltaTimeSeconds: 21600,
-      failureFactor: 10,
-      passwordPolicy: "length(16) and digits(3) and lowerCase(3) and upperCase(3) and specialChars(3) and notUsername and notEmail and passwordHistory(12)",
+      maxFailureWaitSeconds: 3600,
+      minimumQuickLoginWaitSeconds: 600,
+      waitIncrementSeconds: 300,
+      quickLoginCheckMilliSeconds: 100,
+      maxDeltaTimeSeconds: 14400,
+      failureFactor: 5,
+      passwordPolicy: "length(16) and digits(3) and lowerCase(3) and upperCase(3) and specialChars(3) and notUsername and notEmail and passwordHistory(24)",
       otpPolicyType: "totp",
-      otpPolicyAlgorithm: "HmacSHA256",
+      otpPolicyAlgorithm: "HmacSHA512",
       otpPolicyDigits: 8,
       otpPolicyLookAheadWindow: 1,
       otpPolicyPeriod: 30,
       attributes: {
-        'kritis.security_level': 'high',
-        'bsi.grundschutz_compliant': 'true',
-        'audit.log_all_events': 'true',
-        'session.max_lifespan': '28800', // 8 hours
-        'gdpr.data_retention_days': '2555'
+        'kwg.banking_compliance': 'true',
+        'kwg.banking_secrecy': 'enforced',
+        'aml.kyc_required': 'true',
+        'mifid.investor_protection': 'true',
+        'audit.financial_transactions': 'full',
+        'session.banking_timeout': '1800',
+        'gdpr.financial_data_protection': 'maximum',
+        'retention.banking_records': '3653'
       }
     }
   },
   {
-    id: 'healthcare_mdr',
-    name: 'Gesundheitswesen MDR',
-    description: 'Medizinprodukte-Verordnung konforme Konfiguration',
-    compliance: ['hipaa_de', 'gdpr', 'bdsg'],
-    industries: ['health', 'medical'],
+    id: 'accounting_gobd_compliant',
+    name: 'Buchhaltung GoBD Compliance',
+    description: 'GoBD-konforme Buchhaltungssoftware-Konfiguration',
+    compliance: ['gobd', 'gdpr', 'steuergesetze'],
+    industries: ['accounting', 'finance'],
     template: {
-      realm: 'healthcare-mdr-realm',
-      displayName: 'Medizinische Anwendung',
+      realm: 'accounting-gobd-realm',
+      displayName: 'Buchhaltungs-System',
+      enabled: true,
+      sslRequired: 'all',
+      userManagedAccessAllowed: true,
+      registrationAllowed: false,
+      rememberMe: false,
+      verifyEmail: true,
+      loginWithEmailAllowed: true,
+      duplicateEmailsAllowed: false,
+      resetPasswordAllowed: true,
+      editUsernameAllowed: false,
+      bruteForceProtected: true,
+      maxFailureWaitSeconds: 1800,
+      passwordPolicy: "length(14) and digits(2) and lowerCase(2) and upperCase(2) and specialChars(2) and notUsername and notEmail and passwordHistory(12)",
+      attributes: {
+        'gobd.immutable_records': 'true',
+        'gobd.complete_documentation': 'true',
+        'gobd.timely_booking': 'enforced',
+        'gobd.audit_trail': 'complete',
+        'steuergesetze.tax_compliance': 'true',
+        'steuergesetze.elster_ready': 'true',
+        'audit.accounting_events': 'all',
+        'retention.accounting_records': '3653',
+        'gdpr.accounting_data_protection': 'true'
+      }
+    }
+  },
+  {
+    id: 'insurance_vag_compliant',
+    name: 'Versicherung VAG Compliance',
+    description: 'VAG und Solvabilität II konforme Versicherungskonfiguration',
+    compliance: ['vag', 'gdpr', 'aml'],
+    industries: ['insurance', 'finance'],
+    template: {
+      realm: 'insurance-vag-realm',
+      displayName: 'Versicherungs-System',
       enabled: true,
       sslRequired: 'all',
       userManagedAccessAllowed: false,
@@ -202,26 +226,29 @@ export const realmTemplates: RealmTemplate[] = [
       resetPasswordAllowed: true,
       editUsernameAllowed: false,
       bruteForceProtected: true,
-      maxFailureWaitSeconds: 1200,
-      passwordPolicy: "length(14) and digits(2) and lowerCase(2) and upperCase(2) and specialChars(2) and notUsername and notEmail and passwordHistory(8)",
+      maxFailureWaitSeconds: 2400,
+      passwordPolicy: "length(14) and digits(2) and lowerCase(2) and upperCase(2) and specialChars(2) and notUsername and notEmail and passwordHistory(16)",
       attributes: {
-        'healthcare.patient_data_protection': 'true',
-        'mdr.medical_device_compliant': 'true',
-        'audit.healthcare_events': 'true',
-        'gdpr.health_data_special_category': 'true',
-        'session.healthcare_timeout': '3600' // 1 hour
+        'vag.solvency_ii_compliant': 'true',
+        'vag.insurance_secrecy': 'enforced',
+        'vag.risk_management': 'integrated',
+        'vag.governance_requirements': 'met',
+        'aml.insurance_aml': 'true',
+        'audit.insurance_operations': 'comprehensive',
+        'gdpr.insurance_data_protection': 'enhanced',
+        'retention.insurance_records': '3653'
       }
     }
   },
   {
-    id: 'financial_gobd',
-    name: 'Finanzwesen GoBD',
-    description: 'GoBD-konforme Konfiguration für Finanzdienstleister',
-    compliance: ['gobd', 'gdpr', 'bdsg'],
-    industries: ['finance', 'accounting'],
+    id: 'tax_consulting_compliant',
+    name: 'Steuerberatung Compliance',
+    description: 'Speziell für Steuerberatungskanzleien konfigurierte Lösung',
+    compliance: ['steuergesetze', 'gobd', 'gdpr'],
+    industries: ['tax_consulting', 'accounting'],
     template: {
-      realm: 'financial-gobd-realm',
-      displayName: 'Finanz-Anwendung',
+      realm: 'tax-consulting-realm',
+      displayName: 'Steuerberatungs-System',
       enabled: true,
       sslRequired: 'all',
       userManagedAccessAllowed: true,
@@ -235,11 +262,46 @@ export const realmTemplates: RealmTemplate[] = [
       bruteForceProtected: true,
       passwordPolicy: "length(12) and digits(2) and lowerCase(2) and upperCase(2) and specialChars(2) and notUsername and notEmail",
       attributes: {
-        'gobd.audit_trail': 'true',
-        'gobd.data_immutability': 'true',
-        'financial.transaction_logging': 'true',
-        'gdpr.financial_data_protection': 'true',
-        'retention.financial_records': '3653' // 10 years
+        'steuergesetze.tax_advisory_compliant': 'true',
+        'steuergesetze.client_confidentiality': 'enforced',
+        'gobd.tax_records_compliant': 'true',
+        'audit.tax_advisory_operations': 'detailed',
+        'gdpr.client_data_protection': 'maximum',
+        'retention.tax_documents': '3653',
+        'elster.digital_interface': 'enabled'
+      }
+    }
+  },
+  {
+    id: 'investment_mifid_compliant',
+    name: 'Investment MiFID II Compliance',
+    description: 'MiFID II konforme Konfiguration für Wertpapierfirmen',
+    compliance: ['mifid', 'gdpr', 'aml'],
+    industries: ['investment', 'finance'],
+    template: {
+      realm: 'investment-mifid-realm',
+      displayName: 'Investment-System',
+      enabled: true,
+      sslRequired: 'all',
+      userManagedAccessAllowed: false,
+      registrationAllowed: false,
+      rememberMe: false,
+      verifyEmail: true,
+      loginWithEmailAllowed: true,
+      duplicateEmailsAllowed: false,
+      resetPasswordAllowed: true,
+      editUsernameAllowed: false,
+      bruteForceProtected: true,
+      passwordPolicy: "length(14) and digits(2) and lowerCase(2) and upperCase(2) and specialChars(2) and notUsername and notEmail and passwordHistory(20)",
+      attributes: {
+        'mifid.investor_protection': 'maximum',
+        'mifid.transparency_requirements': 'full',
+        'mifid.recording_obligations': 'comprehensive',
+        'mifid.best_execution': 'enforced',
+        'mifid.conflict_of_interest': 'managed',
+        'aml.investment_aml': 'true',
+        'audit.trading_activities': 'complete',
+        'gdpr.investment_data_protection': 'enhanced'
       }
     }
   }
