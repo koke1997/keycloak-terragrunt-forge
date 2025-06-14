@@ -1,10 +1,11 @@
-
 import { useState } from "react";
 import { JsonFileUploader } from "@/components/JsonFileUploader";
 import { ConversionResults } from "@/components/ConversionResults";
 import { ComplianceTemplateSelector } from "@/components/ComplianceTemplateSelector";
 import { TerragruntConfigPanel } from "@/components/TerragruntConfigPanel";
 import { ProjectTypeSelector } from "@/components/ProjectTypeSelector";
+import { EnhancedProjectBuilder } from "@/components/EnhancedProjectBuilder";
+import { XPDevelopmentConsole } from "@/components/XPDevelopmentConsole";
 import { LocalDevSetupWizard } from "@/components/LocalDevSetupWizard";
 import { keycloakRealmJsonToTerragrunt, isValidKeycloakJson, TerraformFile } from "@/utils/keycloakToTerragrunt";
 import { toast } from "@/hooks/use-toast";
@@ -12,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Rocket, Settings, FileText, Layers, Zap } from "lucide-react";
+import { Rocket, Settings, FileText, Layers, Zap, Brain, Users } from "lucide-react";
 import type { RealmTemplate } from "@/utils/complianceTemplates";
 
 type UploadedFile = {
@@ -58,6 +59,8 @@ const Index = () => {
   const [selectedProject, setSelectedProject] = useState<ProjectTemplate | null>(null);
   const [terragruntConfig, setTerragruntConfig] = useState<TerragruntConfig | null>(null);
   const [showSetupWizard, setShowSetupWizard] = useState(false);
+  const [enhancedProjectConfig, setEnhancedProjectConfig] = useState(null);
+  const [showXPConsole, setShowXPConsole] = useState(false);
 
   const handleConvertAll = () => {
     setProcessing(true);
@@ -157,6 +160,24 @@ const Index = () => {
     });
   };
 
+  const handleEnhancedProjectGenerate = (config: any) => {
+    setEnhancedProjectConfig(config);
+    setShowXPConsole(true);
+    toast({
+      title: "XP Project Initialized",
+      description: `Starting ${config.projectName} with ${config.roles.length} active roles and local LLM integration.`
+    });
+  };
+
+  const handleXPComplete = () => {
+    setShowXPConsole(false);
+    setEnhancedProjectConfig(null);
+    toast({
+      title: "Development Complete",
+      description: "Your XP project iteration has been completed successfully!"
+    });
+  };
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-start bg-background py-12">
       <section className="w-full max-w-7xl space-y-8">
@@ -185,24 +206,42 @@ const Index = () => {
               <Rocket className="w-3 h-3" />
               Local Dev Setup
             </Badge>
+            <Badge variant="secondary" className="flex items-center gap-1">
+              <Brain className="w-3 h-3" />
+              AI-Powered XP
+            </Badge>
+            <Badge variant="secondary" className="flex items-center gap-1">
+              <Users className="w-3 h-3" />
+              Team Collaboration
+            </Badge>
           </div>
         </div>
 
-        {showSetupWizard && selectedProject ? (
+        {showXPConsole && enhancedProjectConfig ? (
+          <XPDevelopmentConsole
+            projectConfig={enhancedProjectConfig}
+            onComplete={handleXPComplete}
+          />
+        ) : showSetupWizard && selectedProject ? (
           <LocalDevSetupWizard
             projectName={terragruntConfig?.projectName || selectedProject.name}
             projectType={selectedProject.type}
             onComplete={handleSetupComplete}
           />
         ) : (
-          <Tabs defaultValue="templates" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+          <Tabs defaultValue="enhanced" className="w-full">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="enhanced">AI XP Builder</TabsTrigger>
               <TabsTrigger value="templates">Project Templates</TabsTrigger>
               <TabsTrigger value="upload">Upload Files</TabsTrigger>
               <TabsTrigger value="compliance">Compliance</TabsTrigger>
               <TabsTrigger value="configure">Configure</TabsTrigger>
             </TabsList>
             
+            <TabsContent value="enhanced" className="space-y-6">
+              <EnhancedProjectBuilder onProjectGenerate={handleEnhancedProjectGenerate} />
+            </TabsContent>
+
             <TabsContent value="templates" className="space-y-6">
               <ProjectTypeSelector onProjectSelect={handleProjectSelect} />
               
