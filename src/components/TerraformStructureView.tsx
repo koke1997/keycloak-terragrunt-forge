@@ -52,7 +52,7 @@ export function TerraformStructureView({ terragruntFiles, realmName, onViewFile 
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="overview" className="flex items-center gap-2">
                 <Eye className="w-4 h-4" />
                 Overview
@@ -64,6 +64,14 @@ export function TerraformStructureView({ terragruntFiles, realmName, onViewFile 
               <TabsTrigger value="execution" className="flex items-center gap-2">
                 <Play className="w-4 h-4" />
                 Execution
+              </TabsTrigger>
+              <TabsTrigger value="animated-flow" className="flex items-center gap-2">
+                <Play className="w-4 h-4" />
+                Animated Flow
+              </TabsTrigger>
+              <TabsTrigger value="file-order" className="flex items-center gap-2">
+                <ArrowRight className="w-4 h-4" />
+                File Order
               </TabsTrigger>
               <TabsTrigger value="files" className="flex items-center gap-2">
                 <Folder className="w-4 h-4" />
@@ -81,6 +89,14 @@ export function TerraformStructureView({ terragruntFiles, realmName, onViewFile 
 
             <TabsContent value="execution" className="mt-6">
               <ExecutionFlow terragruntFiles={terragruntFiles} realmName={realmName} />
+            </TabsContent>
+
+            <TabsContent value="animated-flow" className="mt-6">
+              <AnimatedExecutionFlow terragruntFiles={terragruntFiles} realmName={realmName} />
+            </TabsContent>
+
+            <TabsContent value="file-order" className="mt-6">
+              <FileExecutionVisualizer terragruntFiles={terragruntFiles} realmName={realmName} />
             </TabsContent>
 
             <TabsContent value="files" className="mt-6">
