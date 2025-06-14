@@ -15,7 +15,10 @@ import {
   Info,
   ChevronDown,
   ChevronUp,
-  FileText
+  FileText,
+  BarChart3,
+  Activity,
+  Target
 } from "lucide-react";
 import { analyzeResourcesInFiles, ResourceCount } from "@/utils/terraformResourceAnalyzer";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -35,6 +38,8 @@ interface ResourceOverviewProps {
 interface EnhancedResourceCount extends ResourceCount {
   icon: React.ReactNode;
   color: string;
+  bgColor: string;
+  borderColor: string;
   files: string[];
 }
 
@@ -53,24 +58,91 @@ export function ResourceOverview({ terragruntFiles, realmName }: ResourceOvervie
 
   const getResourceTypeConfig = (type: string) => {
     const configs = {
-      realm: { icon: <Database className="w-4 h-4" />, color: 'bg-blue-100 text-blue-800' },
-      roles: { icon: <Shield className="w-4 h-4" />, color: 'bg-purple-100 text-purple-800' },
-      groups: { icon: <Users className="w-4 h-4" />, color: 'bg-green-100 text-green-800' },
-      users: { icon: <UserCheck className="w-4 h-4" />, color: 'bg-orange-100 text-orange-800' },
-      clients: { icon: <Settings className="w-4 h-4" />, color: 'bg-cyan-100 text-cyan-800' },
-      scopes: { icon: <Layers className="w-4 h-4" />, color: 'bg-pink-100 text-pink-800' },
-      flows: { icon: <Workflow className="w-4 h-4" />, color: 'bg-indigo-100 text-indigo-800' },
-      identity_providers: { icon: <Globe className="w-4 h-4" />, color: 'bg-yellow-100 text-yellow-800' },
-      mappers: { icon: <Key className="w-4 h-4" />, color: 'bg-teal-100 text-teal-800' },
-      group_memberships: { icon: <Users className="w-4 h-4" />, color: 'bg-lime-100 text-lime-800' },
-      role_mappings: { icon: <Shield className="w-4 h-4" />, color: 'bg-violet-100 text-violet-800' },
-      client_roles: { icon: <Lock className="w-4 h-4" />, color: 'bg-rose-100 text-rose-800' },
-      executors: { icon: <Workflow className="w-4 h-4" />, color: 'bg-amber-100 text-amber-800' }
+      realm: { 
+        icon: <Database className="w-5 h-5" />, 
+        color: 'text-blue-700', 
+        bgColor: 'bg-blue-50 hover:bg-blue-100',
+        borderColor: 'border-blue-200'
+      },
+      roles: { 
+        icon: <Shield className="w-5 h-5" />, 
+        color: 'text-purple-700', 
+        bgColor: 'bg-purple-50 hover:bg-purple-100',
+        borderColor: 'border-purple-200'
+      },
+      groups: { 
+        icon: <Users className="w-5 h-5" />, 
+        color: 'text-green-700', 
+        bgColor: 'bg-green-50 hover:bg-green-100',
+        borderColor: 'border-green-200'
+      },
+      users: { 
+        icon: <UserCheck className="w-5 h-5" />, 
+        color: 'text-orange-700', 
+        bgColor: 'bg-orange-50 hover:bg-orange-100',
+        borderColor: 'border-orange-200'
+      },
+      clients: { 
+        icon: <Settings className="w-5 h-5" />, 
+        color: 'text-cyan-700', 
+        bgColor: 'bg-cyan-50 hover:bg-cyan-100',
+        borderColor: 'border-cyan-200'
+      },
+      scopes: { 
+        icon: <Layers className="w-5 h-5" />, 
+        color: 'text-pink-700', 
+        bgColor: 'bg-pink-50 hover:bg-pink-100',
+        borderColor: 'border-pink-200'
+      },
+      flows: { 
+        icon: <Workflow className="w-5 h-5" />, 
+        color: 'text-indigo-700', 
+        bgColor: 'bg-indigo-50 hover:bg-indigo-100',
+        borderColor: 'border-indigo-200'
+      },
+      identity_providers: { 
+        icon: <Globe className="w-5 h-5" />, 
+        color: 'text-yellow-700', 
+        bgColor: 'bg-yellow-50 hover:bg-yellow-100',
+        borderColor: 'border-yellow-200'
+      },
+      mappers: { 
+        icon: <Key className="w-5 h-5" />, 
+        color: 'text-teal-700', 
+        bgColor: 'bg-teal-50 hover:bg-teal-100',
+        borderColor: 'border-teal-200'
+      },
+      group_memberships: { 
+        icon: <Users className="w-5 h-5" />, 
+        color: 'text-lime-700', 
+        bgColor: 'bg-lime-50 hover:bg-lime-100',
+        borderColor: 'border-lime-200'
+      },
+      role_mappings: { 
+        icon: <Shield className="w-5 h-5" />, 
+        color: 'text-violet-700', 
+        bgColor: 'bg-violet-50 hover:bg-violet-100',
+        borderColor: 'border-violet-200'
+      },
+      client_roles: { 
+        icon: <Lock className="w-5 h-5" />, 
+        color: 'text-rose-700', 
+        bgColor: 'bg-rose-50 hover:bg-rose-100',
+        borderColor: 'border-rose-200'
+      },
+      executors: { 
+        icon: <Workflow className="w-5 h-5" />, 
+        color: 'text-amber-700', 
+        bgColor: 'bg-amber-50 hover:bg-amber-100',
+        borderColor: 'border-amber-200'
+      }
     };
     
     return configs[type as keyof typeof configs] || { 
-      icon: <Settings className="w-4 h-4" />, 
-      color: 'bg-gray-100 text-gray-800' 
+      icon: <Settings className="w-5 h-5" />, 
+      color: 'text-gray-700',
+      bgColor: 'bg-gray-50 hover:bg-gray-100',
+      borderColor: 'border-gray-200'
     };
   };
 
@@ -86,110 +158,180 @@ export function ResourceOverview({ terragruntFiles, realmName }: ResourceOvervie
 
   return (
     <TooltipProvider>
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Layers className="w-5 h-5" />
-            Resource Overview
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-            {enhancedResources.map(resource => (
-              <Collapsible 
-                key={resource.type}
-                open={expandedSections.has(resource.type)}
-                onOpenChange={() => toggleSection(resource.type)}
-              >
-                <div className="border rounded-lg hover:bg-gray-50">
-                  <CollapsibleTrigger className="w-full p-3 text-left">
-                    <div className="flex items-center gap-3">
-                      {resource.icon}
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-2xl">{resource.count}</span>
-                          <Badge className={resource.color}>
-                            {resource.type.replace('_', ' ')}
-                          </Badge>
-                          {(resource.actualResources! > 0 && resource.terraformBlocks! > 0) && (
-                            <Tooltip>
-                              <TooltipTrigger>
-                                <Info className="w-3 h-3 text-gray-400" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <div className="text-xs">
-                                  <div>Actual resources: {resource.actualResources}</div>
-                                  <div>Terraform blocks: {resource.terraformBlocks}</div>
-                                </div>
-                              </TooltipContent>
-                            </Tooltip>
-                          )}
-                          {expandedSections.has(resource.type) ? (
-                            <ChevronUp className="w-4 h-4 text-gray-400" />
-                          ) : (
-                            <ChevronDown className="w-4 h-4 text-gray-400" />
-                          )}
-                        </div>
-                        <p className="text-sm text-gray-600">{resource.description}</p>
-                        {resource.actualResources! > 0 && resource.terraformBlocks! > 0 && 
-                         resource.actualResources !== resource.terraformBlocks && (
-                          <p className="text-xs text-gray-500 mt-1">
-                            {resource.terraformBlocks} Terraform block{resource.terraformBlocks !== 1 ? 's' : ''} → {resource.actualResources} resource{resource.actualResources !== 1 ? 's' : ''}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </CollapsibleTrigger>
-                  
-                  <CollapsibleContent>
-                    <div className="px-3 pb-3 border-t bg-gray-50/50">
-                      <div className="pt-3">
-                        <h4 className="text-sm font-medium text-gray-600 mb-2 flex items-center gap-1">
-                          <FileText className="w-3 h-3" />
-                          Found in files:
-                        </h4>
-                        {resource.files.length > 0 ? (
-                          <div className="space-y-1">
-                            {resource.files.map((file, index) => (
-                              <div key={index} className="text-xs text-gray-500 font-mono bg-white px-2 py-1 rounded border">
-                                {file}
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="text-xs text-gray-400 italic">No source files detected</p>
-                        )}
-                      </div>
-                    </div>
-                  </CollapsibleContent>
+      <div className="space-y-6">
+        {/* Header Section */}
+        <Card className="border-2 bg-gradient-to-r from-blue-50 to-indigo-50">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-3 text-2xl">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <BarChart3 className="w-6 h-6 text-blue-600" />
+              </div>
+              Resource Overview Dashboard
+            </CardTitle>
+            <p className="text-gray-600 mt-2">
+              Comprehensive analysis of your Keycloak infrastructure resources
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="bg-white rounded-lg p-4 border shadow-sm">
+                <div className="flex items-center gap-2">
+                  <Target className="w-5 h-5 text-blue-600" />
+                  <span className="text-sm font-medium text-gray-600">Total Resources</span>
                 </div>
-              </Collapsible>
-            ))}
-          </div>
-          
-          {enhancedResources.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              <p>No Keycloak resources detected in the uploaded files.</p>
-              <p className="text-sm mt-2">Make sure your files contain valid Terraform resource definitions or Keycloak JSON data.</p>
+                <div className="text-2xl font-bold text-gray-900 mt-1">{totalResources}</div>
+              </div>
+              
+              <div className="bg-white rounded-lg p-4 border shadow-sm">
+                <div className="flex items-center gap-2">
+                  <Database className="w-5 h-5 text-green-600" />
+                  <span className="text-sm font-medium text-gray-600">Target Realm</span>
+                </div>
+                <div className="text-lg font-semibold text-gray-900 mt-1 truncate">{realmName}</div>
+              </div>
+              
+              <div className="bg-white rounded-lg p-4 border shadow-sm">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-purple-600" />
+                  <span className="text-sm font-medium text-gray-600">Files Analyzed</span>
+                </div>
+                <div className="text-2xl font-bold text-gray-900 mt-1">{terragruntFiles.length}</div>
+              </div>
+              
+              <div className="bg-white rounded-lg p-4 border shadow-sm">
+                <div className="flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-orange-600" />
+                  <span className="text-sm font-medium text-gray-600">Resource Types</span>
+                </div>
+                <div className="text-2xl font-bold text-gray-900 mt-1">{enhancedResources.length}</div>
+              </div>
             </div>
-          )}
-          
-          <div className="pt-4 border-t">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Total Resources</span>
-              <span className="font-semibold text-lg">{totalResources}</span>
-            </div>
-            <div className="flex items-center justify-between mt-1">
-              <span className="text-sm text-gray-600">Target Realm</span>
-              <span className="font-medium">{realmName}</span>
-            </div>
-            <div className="flex items-center justify-between mt-1">
-              <span className="text-sm text-gray-600">Files Analyzed</span>
-              <span className="font-medium">{terragruntFiles.length}</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+
+        {/* Resources Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {enhancedResources.map(resource => (
+            <Collapsible 
+              key={resource.type}
+              open={expandedSections.has(resource.type)}
+              onOpenChange={() => toggleSection(resource.type)}
+            >
+              <Card className={`transition-all duration-300 hover:shadow-lg ${resource.borderColor} border-2`}>
+                <CollapsibleTrigger className="w-full">
+                  <CardContent className={`p-6 ${resource.bgColor} transition-colors duration-200`}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className={`p-3 rounded-xl bg-white shadow-sm ${resource.color}`}>
+                          {resource.icon}
+                        </div>
+                        <div className="text-left">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-3xl font-bold ${resource.color}`}>
+                              {resource.count}
+                            </span>
+                            {(resource.actualResources! > 0 && resource.terraformBlocks! > 0) && (
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <Info className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <div className="text-sm space-y-1">
+                                    <div><strong>Actual resources:</strong> {resource.actualResources}</div>
+                                    <div><strong>Terraform blocks:</strong> {resource.terraformBlocks}</div>
+                                  </div>
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
+                          </div>
+                          <div className="text-sm font-medium text-gray-600 capitalize">
+                            {resource.type.replace('_', ' ')}
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            {resource.description}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-col items-end gap-2">
+                        <Badge variant="outline" className={`${resource.color} border-current`}>
+                          {resource.files.length} file{resource.files.length !== 1 ? 's' : ''}
+                        </Badge>
+                        {expandedSections.has(resource.type) ? (
+                          <ChevronUp className="w-5 h-5 text-gray-400" />
+                        ) : (
+                          <ChevronDown className="w-5 h-5 text-gray-400" />
+                        )}
+                      </div>
+                    </div>
+                    
+                    {resource.actualResources! > 0 && resource.terraformBlocks! > 0 && 
+                     resource.actualResources !== resource.terraformBlocks && (
+                      <div className="mt-3 pt-3 border-t border-white/50">
+                        <div className="flex items-center justify-between text-xs text-gray-600">
+                          <span>Terraform blocks: {resource.terraformBlocks}</span>
+                          <span>→</span>
+                          <span>Actual resources: {resource.actualResources}</span>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </CollapsibleTrigger>
+                
+                <CollapsibleContent>
+                  <div className="px-6 pb-6 pt-0">
+                    <div className="bg-white rounded-lg p-4 border shadow-sm">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                        <FileText className="w-4 h-4" />
+                        Source Files ({resource.files.length})
+                      </h4>
+                      {resource.files.length > 0 ? (
+                        <div className="space-y-2">
+                          {resource.files.map((file, index) => (
+                            <div key={index} className="group">
+                              <div className="text-xs font-mono bg-gray-50 px-3 py-2 rounded-md border group-hover:bg-gray-100 transition-colors">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-gray-700">{file.split('/').pop()}</span>
+                                  <span className="text-gray-400">{file.split('/').slice(0, -1).join('/')}</span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-4">
+                          <div className="text-gray-400 text-sm italic">No source files detected</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
+          ))}
+        </div>
+        
+        {enhancedResources.length === 0 && (
+          <Card className="border-2 border-dashed">
+            <CardContent className="py-12">
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
+                  <FileText className="w-8 h-8 text-gray-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">No Resources Detected</h3>
+                  <p className="text-gray-600 mt-2">
+                    No Keycloak resources were found in the uploaded files.
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Make sure your files contain valid Terraform resource definitions or Keycloak JSON data.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </TooltipProvider>
   );
 }
