@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { 
   Users, 
   Brain, 
@@ -21,8 +21,11 @@ import {
   Settings,
   Play,
   RefreshCw,
-  Zap
+  Zap,
+  Workflow,
+  Target
 } from "lucide-react";
+import { XPExpandedRoles, expandedXPRoles, type XPRole } from "@/components/XPExpandedRoles";
 
 interface XPRole {
   id: string;
@@ -30,6 +33,8 @@ interface XPRole {
   description: string;
   icon: React.ReactNode;
   responsibilities: string[];
+  keySkills: string[];
+  toolsUsed: string[];
   aiPrompt: string;
   color: string;
 }
@@ -65,6 +70,8 @@ const xpRoles: XPRole[] = [
     description: 'Defines requirements and priorities',
     icon: <Users className="w-4 h-4" />,
     responsibilities: ['Define user stories', 'Set priorities', 'Accept deliverables', 'Provide feedback'],
+    keySkills: ['Communication', 'Project Management', 'User Research'],
+    toolsUsed: ['Jira', 'Trello', 'Slack'],
     aiPrompt: 'You are a product owner focused on user needs and business value. Prioritize features based on user impact.',
     color: 'bg-blue-100 text-blue-800'
   },
@@ -74,6 +81,8 @@ const xpRoles: XPRole[] = [
     description: 'Implements code and technical solutions',
     icon: <Code2 className="w-4 h-4" />,
     responsibilities: ['Write clean code', 'Implement features', 'Code reviews', 'Technical decisions'],
+    keySkills: ['Programming', 'Problem Solving', 'Version Control'],
+    toolsUsed: ['Git', 'VSCode', 'Jira'],
     aiPrompt: 'You are a senior developer focused on clean, maintainable code and best practices.',
     color: 'bg-green-100 text-green-800'
   },
@@ -83,6 +92,8 @@ const xpRoles: XPRole[] = [
     description: 'Ensures quality and finds issues',
     icon: <TestTube className="w-4 h-4" />,
     responsibilities: ['Write test cases', 'Find bugs', 'Quality assurance', 'User acceptance testing'],
+    keySkills: ['Testing', 'Debugging', 'Automation'],
+    toolsUsed: ['Jest', 'Selenium', 'Postman'],
     aiPrompt: 'You are a QA engineer focused on finding edge cases and ensuring robust, reliable software.',
     color: 'bg-red-100 text-red-800'
   },
@@ -92,6 +103,8 @@ const xpRoles: XPRole[] = [
     description: 'Creates user experience and interface',
     icon: <Palette className="w-4 h-4" />,
     responsibilities: ['UI/UX design', 'User research', 'Wireframes', 'Design systems'],
+    keySkills: ['Design', 'Accessibility', 'User Experience'],
+    toolsUsed: ['Figma', 'Adobe XD', 'InVision'],
     aiPrompt: 'You are a UX/UI designer focused on user-centered design and accessibility.',
     color: 'bg-purple-100 text-purple-800'
   },
@@ -101,6 +114,8 @@ const xpRoles: XPRole[] = [
     description: 'Designs system architecture and patterns',
     icon: <Database className="w-4 h-4" />,
     responsibilities: ['System design', 'Architecture decisions', 'Performance optimization', 'Scalability'],
+    keySkills: ['Architecture', 'Scalability', 'Performance'],
+    toolsUsed: ['Docker', 'Kubernetes', 'AWS'],
     aiPrompt: 'You are a technical architect focused on scalable, maintainable system design.',
     color: 'bg-orange-100 text-orange-800'
   },
@@ -110,6 +125,8 @@ const xpRoles: XPRole[] = [
     description: 'Ensures security best practices',
     icon: <Shield className="w-4 h-4" />,
     responsibilities: ['Security review', 'Vulnerability assessment', 'Compliance', 'Best practices'],
+    keySkills: ['Security', 'Compliance', 'Vulnerability'],
+    toolsUsed: ['Nessus', 'OpenVAS', 'OWASP'],
     aiPrompt: 'You are a security engineer focused on identifying and mitigating security risks.',
     color: 'bg-yellow-100 text-yellow-800'
   }
@@ -175,7 +192,9 @@ const openSourceProjects: OpenSourceProject[] = [
 
 export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBuilderProps) {
   const [selectedProject, setSelectedProject] = useState<OpenSourceProject | null>(null);
-  const [selectedRoles, setSelectedRoles] = useState<string[]>(['customer', 'developer']);
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(['customer', 'developer', 'designer']);
+  const [selectedRole, setSelectedRole] = useState<XPRole | null>(null);
+  const [showRoleDialog, setShowRoleDialog] = useState(false);
   const [llmConfig, setLLMConfig] = useState<LLMConfig>({
     provider: 'ollama',
     endpoint: 'http://localhost:11434',
@@ -187,7 +206,9 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
     iterationLength: 'weekly',
     autoReview: true,
     continuousIntegration: true,
-    pairProgramming: false
+    pairProgramming: true,
+    workflowOptimization: true,
+    realTimeTraining: true
   });
   const [customRequirements, setCustomRequirements] = useState('');
   const [projectName, setProjectName] = useState('');
@@ -200,16 +221,27 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
     );
   };
 
+  const handleRoleInfo = (role: XPRole) => {
+    setSelectedRole(role);
+    setShowRoleDialog(true);
+  };
+
   const handleGenerateProject = () => {
     if (!selectedProject) return;
 
     const config = {
       project: selectedProject,
       projectName: projectName || selectedProject.name,
-      roles: xpRoles.filter(role => selectedRoles.includes(role.id)),
+      roles: expandedXPRoles.filter(role => selectedRoles.includes(role.id)),
       llmConfig,
       iterationSettings,
       customRequirements,
+      features: {
+        workflowOptimization: iterationSettings.workflowOptimization,
+        realTimeTraining: iterationSettings.realTimeTraining,
+        expandedRoles: true,
+        advancedMetrics: true
+      },
       timestamp: new Date().toISOString()
     };
 
@@ -221,10 +253,10 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
       <div className="text-center">
         <h2 className="text-3xl font-bold mb-2 flex items-center justify-center gap-2">
           <Brain className="w-8 h-8 text-purple-600" />
-          AI-Powered XP Project Builder
+          Enhanced AI-Powered XP Project Builder
         </h2>
         <p className="text-muted-foreground">
-          Build open source projects with local LLM and XP programming methodology
+          Advanced workflow optimization with expanded roles and real-time model training
         </p>
       </div>
 
@@ -232,33 +264,38 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Zap className="w-5 h-5" />
-            Enhanced Features
+            New Enhanced Features
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="flex items-center gap-2">
+              <Workflow className="w-4 h-4 text-blue-600" />
+              <span className="text-sm font-medium">Workflow Optimization</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Target className="w-4 h-4 text-green-600" />
+              <span className="text-sm font-medium">Real-Time Training</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-orange-600" />
+              <span className="text-sm font-medium">Expanded Role Library</span>
+            </div>
             <div className="flex items-center gap-2">
               <Brain className="w-4 h-4 text-purple-600" />
-              <span className="text-sm font-medium">Local LLM Integration</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-medium">XP Role-Based Development</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <RefreshCw className="w-4 h-4 text-green-600" />
-              <span className="text-sm font-medium">Iterative Development</span>
+              <span className="text-sm font-medium">Advanced AI Features</span>
             </div>
           </div>
         </CardContent>
       </Card>
 
       <Tabs defaultValue="projects" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="projects">Open Source Projects</TabsTrigger>
-          <TabsTrigger value="roles">XP Roles</TabsTrigger>
-          <TabsTrigger value="llm">LLM Configuration</TabsTrigger>
-          <TabsTrigger value="iteration">Iteration Settings</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="projects">Projects</TabsTrigger>
+          <TabsTrigger value="roles">Enhanced Roles</TabsTrigger>
+          <TabsTrigger value="llm">LLM Config</TabsTrigger>
+          <TabsTrigger value="workflow">Workflow</TabsTrigger>
+          <TabsTrigger value="advanced">Advanced</TabsTrigger>
         </TabsList>
 
         <TabsContent value="projects" className="space-y-4">
@@ -336,51 +373,20 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
         </TabsContent>
 
         <TabsContent value="roles" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {xpRoles.map(role => (
-              <Card 
-                key={role.id}
-                className={`cursor-pointer transition-all ${
-                  selectedRoles.includes(role.id) 
-                    ? 'border-purple-500 shadow-lg' 
-                    : 'hover:shadow-md'
-                }`}
-                onClick={() => handleRoleToggle(role.id)}
-              >
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {role.icon}
-                      <span className="text-sm">{role.name}</span>
-                    </div>
-                    <Badge className={role.color}>
-                      {selectedRoles.includes(role.id) ? 'Active' : 'Inactive'}
-                    </Badge>
-                  </CardTitle>
-                  <CardDescription className="text-xs">{role.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div>
-                    <p className="text-xs font-medium mb-1">Key Responsibilities:</p>
-                    <ul className="text-xs text-muted-foreground">
-                      {role.responsibilities.slice(0, 3).map(resp => (
-                        <li key={resp}>• {resp}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <XPExpandedRoles
+            selectedRoles={selectedRoles}
+            onRoleToggle={handleRoleToggle}
+            onRoleInfo={handleRoleInfo}
+          />
 
           <Card>
             <CardHeader>
-              <CardTitle>Selected Roles Summary</CardTitle>
+              <CardTitle>Selected Roles Summary ({selectedRoles.length})</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
                 {selectedRoles.map(roleId => {
-                  const role = xpRoles.find(r => r.id === roleId);
+                  const role = expandedXPRoles.find(r => r.id === roleId);
                   return role ? (
                     <Badge key={roleId} className={role.color}>
                       {role.name}
@@ -453,11 +459,11 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
           </Card>
         </TabsContent>
 
-        <TabsContent value="iteration" className="space-y-4">
+        <TabsContent value="workflow" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>XP Iteration Settings</CardTitle>
-              <CardDescription>Configure your agile development process</CardDescription>
+              <CardTitle>Enhanced Workflow Settings</CardTitle>
+              <CardDescription>Configure advanced workflow optimization features</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -478,7 +484,27 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="autoReview">Automated Code Review</Label>
+                    <Label htmlFor="workflowOpt">Workflow Optimization</Label>
+                    <Switch
+                      id="workflowOpt"
+                      checked={iterationSettings.workflowOptimization}
+                      onCheckedChange={(checked) => 
+                        setIterationSettings(prev => ({ ...prev, workflowOptimization: checked }))}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="realTimeTraining">Real-Time Model Training</Label>
+                    <Switch
+                      id="realTimeTraining"
+                      checked={iterationSettings.realTimeTraining}
+                      onCheckedChange={(checked) => 
+                        setIterationSettings(prev => ({ ...prev, realTimeTraining: checked }))}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="autoReview">Advanced Code Review</Label>
                     <Switch
                       id="autoReview"
                       checked={iterationSettings.autoReview}
@@ -488,17 +514,7 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="ci">Continuous Integration</Label>
-                    <Switch
-                      id="ci"
-                      checked={iterationSettings.continuousIntegration}
-                      onCheckedChange={(checked) => 
-                        setIterationSettings(prev => ({ ...prev, continuousIntegration: checked }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="pairProgramming">AI Pair Programming</Label>
+                    <Label htmlFor="pairProgramming">Enhanced AI Pair Programming</Label>
                     <Switch
                       id="pairProgramming"
                       checked={iterationSettings.pairProgramming}
@@ -508,15 +524,25 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
                   </div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
+        <TabsContent value="advanced" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Advanced Configuration</CardTitle>
+              <CardDescription>Specify additional requirements and constraints</CardDescription>
+            </CardHeader>
+            <CardContent>
               <div>
-                <Label htmlFor="customRequirements">Additional Requirements</Label>
+                <Label htmlFor="customRequirements">Project-Specific Requirements</Label>
                 <Textarea
                   id="customRequirements"
-                  placeholder="Describe any specific requirements, constraints, or goals for this project..."
+                  placeholder="Describe any specific requirements, architectural constraints, performance goals, or unique features for this project..."
                   value={customRequirements}
                   onChange={(e) => setCustomRequirements(e.target.value)}
-                  rows={4}
+                  rows={6}
                 />
               </div>
             </CardContent>
@@ -532,9 +558,55 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
           className="px-8"
         >
           <Play className="w-4 h-4 mr-2" />
-          Generate AI-Powered XP Project
+          Generate Enhanced XP Project
         </Button>
       </div>
+
+      <Dialog open={showRoleDialog} onOpenChange={setShowRoleDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              {selectedRole?.icon}
+              {selectedRole?.name}
+            </DialogTitle>
+            <DialogDescription>{selectedRole?.description}</DialogDescription>
+          </DialogHeader>
+          {selectedRole && (
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-medium mb-2">Key Responsibilities:</h4>
+                <ul className="list-disc list-inside space-y-1 text-sm">
+                  {selectedRole.responsibilities.map(resp => (
+                    <li key={resp}>{resp}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-medium mb-2">Core Skills:</h4>
+                <div className="flex flex-wrap gap-2">
+                  {selectedRole.keySkills.map(skill => (
+                    <Badge key={skill} variant="secondary">{skill}</Badge>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h4 className="font-medium mb-2">Tools & Technologies:</h4>
+                <div className="flex flex-wrap gap-2">
+                  {selectedRole.toolsUsed.map(tool => (
+                    <Badge key={tool} variant="outline">{tool}</Badge>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h4 className="font-medium mb-2">AI Assistant Personality:</h4>
+                <p className="text-sm text-muted-foreground bg-gray-50 p-3 rounded">
+                  {selectedRole.aiPrompt}
+                </p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
