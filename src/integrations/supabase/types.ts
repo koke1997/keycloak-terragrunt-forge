@@ -9,7 +9,101 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      project_templates: {
+        Row: {
+          category: Database["public"]["Enums"]["project_category"]
+          complexity: Database["public"]["Enums"]["project_complexity"]
+          created_at: string | null
+          description: string | null
+          estimated_hours: string | null
+          github_url: string | null
+          id: string
+          learning_objectives: string[] | null
+          name: string
+          roles: Database["public"]["Enums"]["project_role"][] | null
+          tech_stack: Database["public"]["Enums"]["tech_stack"][] | null
+          updated_at: string | null
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["project_category"]
+          complexity: Database["public"]["Enums"]["project_complexity"]
+          created_at?: string | null
+          description?: string | null
+          estimated_hours?: string | null
+          github_url?: string | null
+          id?: string
+          learning_objectives?: string[] | null
+          name: string
+          roles?: Database["public"]["Enums"]["project_role"][] | null
+          tech_stack?: Database["public"]["Enums"]["tech_stack"][] | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["project_category"]
+          complexity?: Database["public"]["Enums"]["project_complexity"]
+          created_at?: string | null
+          description?: string | null
+          estimated_hours?: string | null
+          github_url?: string | null
+          id?: string
+          learning_objectives?: string[] | null
+          name?: string
+          roles?: Database["public"]["Enums"]["project_role"][] | null
+          tech_stack?: Database["public"]["Enums"]["tech_stack"][] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          category: Database["public"]["Enums"]["project_category"] | null
+          complexity: Database["public"]["Enums"]["project_complexity"] | null
+          created_at: string | null
+          description: string | null
+          estimated_hours: string | null
+          id: string
+          name: string
+          roles: Database["public"]["Enums"]["project_role"][] | null
+          tech_stack: Database["public"]["Enums"]["tech_stack"][] | null
+          template_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["project_category"] | null
+          complexity?: Database["public"]["Enums"]["project_complexity"] | null
+          created_at?: string | null
+          description?: string | null
+          estimated_hours?: string | null
+          id?: string
+          name: string
+          roles?: Database["public"]["Enums"]["project_role"][] | null
+          tech_stack?: Database["public"]["Enums"]["tech_stack"][] | null
+          template_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["project_category"] | null
+          complexity?: Database["public"]["Enums"]["project_complexity"] | null
+          created_at?: string | null
+          description?: string | null
+          estimated_hours?: string | null
+          id?: string
+          name?: string
+          roles?: Database["public"]["Enums"]["project_role"][] | null
+          tech_stack?: Database["public"]["Enums"]["tech_stack"][] | null
+          template_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "project_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +112,63 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      project_category: "web-app" | "api" | "full-stack" | "mobile" | "desktop"
+      project_complexity: "Simple" | "Beginner" | "Intermediate" | "Advanced"
+      project_role:
+        | "developer"
+        | "designer"
+        | "product manager"
+        | "security"
+        | "devops"
+        | "qa"
+        | "ai practitioner"
+        | "researcher"
+        | "customer"
+        | "technical writer"
+        | "ux designer"
+        | "data analyst"
+        | "customer success"
+        | "manager"
+        | "seo"
+        | "job seeker"
+        | "student"
+        | "machine learning engineer"
+      project_type:
+        | "keycloak"
+        | "spring-boot"
+        | "microservices"
+        | "full-stack"
+        | "web-app"
+        | "api"
+        | "mobile"
+        | "desktop"
+      tech_stack:
+        | "React"
+        | "TypeScript"
+        | "Supabase"
+        | "Tailwind CSS"
+        | "Framer Motion"
+        | "Chart.js"
+        | "PWA"
+        | "TinyMCE"
+        | "React Query"
+        | "DnD Kit"
+        | "Next.js"
+        | "Stripe"
+        | "Socket.IO"
+        | "Hugging Face"
+        | "llama.cpp"
+        | "GitHub API"
+        | "Recharts"
+        | "PapaParse"
+        | "PDF"
+        | "Swagger"
+        | "Markdown"
+        | "Docker"
+        | "onnxruntime-web"
+        | "Web Workers"
+        | "Vercel"
+        | "Other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +283,67 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      project_category: ["web-app", "api", "full-stack", "mobile", "desktop"],
+      project_complexity: ["Simple", "Beginner", "Intermediate", "Advanced"],
+      project_role: [
+        "developer",
+        "designer",
+        "product manager",
+        "security",
+        "devops",
+        "qa",
+        "ai practitioner",
+        "researcher",
+        "customer",
+        "technical writer",
+        "ux designer",
+        "data analyst",
+        "customer success",
+        "manager",
+        "seo",
+        "job seeker",
+        "student",
+        "machine learning engineer",
+      ],
+      project_type: [
+        "keycloak",
+        "spring-boot",
+        "microservices",
+        "full-stack",
+        "web-app",
+        "api",
+        "mobile",
+        "desktop",
+      ],
+      tech_stack: [
+        "React",
+        "TypeScript",
+        "Supabase",
+        "Tailwind CSS",
+        "Framer Motion",
+        "Chart.js",
+        "PWA",
+        "TinyMCE",
+        "React Query",
+        "DnD Kit",
+        "Next.js",
+        "Stripe",
+        "Socket.IO",
+        "Hugging Face",
+        "llama.cpp",
+        "GitHub API",
+        "Recharts",
+        "PapaParse",
+        "PDF",
+        "Swagger",
+        "Markdown",
+        "Docker",
+        "onnxruntime-web",
+        "Web Workers",
+        "Vercel",
+        "Other",
+      ],
+    },
   },
 } as const

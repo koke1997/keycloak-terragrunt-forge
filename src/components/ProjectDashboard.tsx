@@ -16,6 +16,8 @@ import { Info, Users, LayoutDashboard, Rocket, LayoutList } from "lucide-react";
 import { useProjectState } from "@/hooks/useProjectState";
 import { XPProjectStepper } from "@/components/XPProjectStepper";
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { useProjects } from "@/hooks/useProjects";
+import { useState } from "react";
 
 // Modern dashboard action buttons for quick access
 function QuickActions() {
@@ -52,11 +54,15 @@ function QuickActions() {
 }
 
 export function ProjectDashboard() {
+  // --- Replace useProjectState for project CRUD with Supabase ---
+  const { projects, isLoading, isError, createProject, updateProject, deleteProject } = useProjects();
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+
   const {
     files,
     results,
     processing,
-    selectedProject,
+    selectedProject: selectedTemplate,
     terragruntConfig,
     showSetupWizard,
     enhancedProjectConfig,
@@ -77,7 +83,11 @@ export function ProjectDashboard() {
 
   const { toast } = useToast();
 
-  // Confirmation toasts for key actions
+  // Pull project by id or null
+  const selectedProject =
+    projects?.find((p) => p.id === selectedProjectId) ?? null;
+
+  // Confirmation toast on select
   useEffect(() => {
     if (selectedProject) {
       toast({
@@ -88,6 +98,12 @@ export function ProjectDashboard() {
     }
   }, [selectedProject, toast]);
 
+  // New Project form state
+  const [newProjectForm, setNewProjectForm] = useState({
+    name: "",
+    description: "",
+  });
+
   if (showXPConsole && enhancedProjectConfig) {
     return (
       <XPDevelopmentConsole
@@ -97,11 +113,11 @@ export function ProjectDashboard() {
     );
   }
 
-  if (showSetupWizard && selectedProject) {
+  if (showSetupWizard && selectedTemplate) {
     return (
       <LocalDevSetupWizard
-        projectName={terragruntConfig?.projectName || selectedProject.name}
-        projectType={selectedProject.type}
+        projectName={terragruntConfig?.projectName || selectedTemplate.name}
+        projectType={selectedTemplate.type}
         onComplete={handleSetupComplete}
       />
     );
@@ -127,6 +143,7 @@ export function ProjectDashboard() {
     );
   }
 
+  // --- UI ---
   return (
     <div className="animate-fade-in space-y-2">
       {/* Modernized Help & Quick Start Area */}
@@ -157,6 +174,120 @@ export function ProjectDashboard() {
           </CardContent>
         </CardHeader>
       </Card>
+
+      <div className="my-8">
+        {isLoading ? (
+          <div className="text-center py-8 text-muted-foreground">Loading projects...</div>
+        ) : isError ? (
+          <div className="text-center py-8 text-red-600">Error loading projects!</div>
+        ) : (
+          <div>
+            <div className="text-lg font-semibold mb-4 flex items-center gap-2">
+              Your Projects
+              <Badge variant="secondary">{projects?.length ?? 0}</Badge>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {projects && projects.length > 0 ? (
+                projects.map((project) => (
+                  <div
+                    key={project.id}
+                    className={`border rounded p-4 bg-white shadow-sm group flex flex-col ${selectedProjectId === project.id ? "border-purple-500 ring-2 ring-purple-300" : "hover:border-purple-300"}`}
+                    tabIndex={0}
+                    aria-selected={selectedProjectId === project.id}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div
+                        className="font-bold text-lg cursor-pointer truncate"
+                        onClick={() => setSelectedProjectId(project.id)}
+                        title={project.name}
+                      >
+                        {project.name}
+                      </div>
+                      <div className="flex gap-1">
+                        <Badge variant="outline">{project.complexity ?? "N/A"}</Badge>
+                        <button
+                          aria-label="Delete"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            await deleteProject(project.id);
+                            toast({
+                              title: "Project Deleted",
+                              description: `"${project.name}" has been deleted.`,
+                              duration: 1800,
+                            });
+                            if (selectedProjectId === project.id) setSelectedProjectId(null);
+                          }}
+                          className="ml-2 text-xs px-2 py-0.5 rounded bg-red-100 text-red-700 hover:bg-red-200"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                    <div className="text-muted-foreground mt-1 line-clamp-2 text-sm">
+                      {project.description || <span className="italic">No description</span>}
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {project.tech_stack?.map((ts) => (
+                        <Badge key={ts} variant="secondary">{ts}</Badge>
+                      ))}
+                      {project.category && <Badge variant="outline">{project.category}</Badge>}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-muted-foreground text-center col-span-full">
+                  No projects found. Create one below!
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* New Project Form */}
+      <div className="my-6 border rounded-lg bg-white shadow-md max-w-md mx-auto p-6 space-y-3">
+        <div className="font-semibold text-purple-800 text-lg flex items-center gap-2">
+          + New Project
+        </div>
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (!newProjectForm.name) {
+              toast({ title: "Missing Project Name", description: "Please enter a project name." });
+              return;
+            }
+            await createProject({
+              name: newProjectForm.name,
+              description: newProjectForm.description,
+            });
+            setNewProjectForm({ name: "", description: "" });
+            toast({ title: "Project Created", description: "Your project has been created!" });
+          }}
+          className="space-y-3"
+        >
+          <input
+            className="w-full border rounded px-3 py-2 text-base"
+            placeholder="Project name"
+            value={newProjectForm.name}
+            onChange={e => setNewProjectForm(f => ({ ...f, name: e.target.value }))}
+            required
+          />
+          <textarea
+            className="w-full border rounded px-3 py-2"
+            placeholder="Short description (optional)"
+            value={newProjectForm.description}
+            onChange={e => setNewProjectForm(f => ({ ...f, description: e.target.value }))}
+            rows={2}
+          />
+          <button
+            className="bg-purple-600 hover:bg-purple-700 text-white rounded px-4 py-2 font-semibold"
+            type="submit"
+          >
+            Create Project
+          </button>
+        </form>
+      </div>
+
       <Tabs defaultValue="xp" className="w-full animate-fade-in">
         <TabsList className="grid w-full grid-cols-2 mb-6 h-14">
           <TooltipProvider>
@@ -218,27 +349,27 @@ export function ProjectDashboard() {
 
           <ProjectTypeSelector onProjectSelect={handleProjectSelect} />
           
-          {selectedProject && (
+          {selectedTemplate && (
             <Card className="border-green-200 bg-gradient-to-tr from-green-100 via-emerald-100 to-white animate-fade-in shadow-lg transition hover-scale">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-green-800 text-lg">
                   <Badge className="bg-green-600">Selected</Badge>
-                  {selectedProject.name}
+                  {selectedTemplate.name}
                 </CardTitle>
                 <CardDescription className="text-green-700">
-                  {selectedProject.description}
+                  {selectedTemplate.description}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div className="flex gap-2 flex-wrap">
-                    <Badge variant="outline">{selectedProject.complexity}</Badge>
+                    <Badge variant="outline">{selectedTemplate.complexity}</Badge>
                     <Badge variant="outline">
-                      {"estimatedTime" in selectedProject && selectedProject.estimatedTime
-                        ? selectedProject.estimatedTime
-                        : (isOpenSourceProject(selectedProject) && selectedProject.estimatedHours) || ""}
+                      {"estimatedTime" in selectedTemplate && selectedTemplate.estimatedTime
+                        ? selectedTemplate.estimatedTime
+                        : (isOpenSourceProject(selectedTemplate) && selectedTemplate.estimatedHours) || ""}
                     </Badge>
-                    <Badge variant="outline">{selectedProject.terragruntModules?.length || 1} modules</Badge>
+                    <Badge variant="outline">{selectedTemplate.terragruntModules?.length || 1} modules</Badge>
                   </div>
                   <TooltipProvider>
                     <Tooltip>
@@ -258,27 +389,27 @@ export function ProjectDashboard() {
                 </div>
                 {/* More details on selected template */}
                 <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                  {isOpenSourceProject(selectedProject) && (
+                  {isOpenSourceProject(selectedTemplate) && (
                     <>
                       <Badge variant="secondary">
                         GitHub:
-                        <a href={selectedProject.githubUrl}
+                        <a href={selectedTemplate.githubUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="ml-1 underline">
-                          {selectedProject.githubUrl.replace(/^https?:\/\//, '')}
+                          {selectedTemplate.githubUrl.replace(/^https?:\/\//, '')}
                         </a>
                       </Badge>
-                      <Badge variant="secondary">{selectedProject.techStack?.join(", ")}</Badge>
-                      <Badge variant="secondary">{selectedProject.category}</Badge>
+                      <Badge variant="secondary">{selectedTemplate.techStack?.join(", ")}</Badge>
+                      <Badge variant="secondary">{selectedTemplate.category}</Badge>
                     </>
                   )}
                 </div>
                 <div className="mt-2">
                   <div className="font-bold text-slate-700 mb-1">Learning Objectives:</div>
                   <ul className="list-disc pl-6 text-slate-600 space-y-1">
-                    {isOpenSourceProject(selectedProject) && selectedProject.learningObjectives
-                      ? selectedProject.learningObjectives.map(obj => (
+                    {isOpenSourceProject(selectedTemplate) && selectedTemplate.learningObjectives
+                      ? selectedTemplate.learningObjectives.map(obj => (
                         <li key={obj}>{obj}</li>
                       ))
                       : <li>N/A</li>
@@ -288,8 +419,8 @@ export function ProjectDashboard() {
                 <div className="mt-2">
                   <span className="font-bold text-slate-700">Roles:</span>
                   <div className="inline-flex gap-1 ml-2">
-                    {isOpenSourceProject(selectedProject) && selectedProject.roles
-                      ? selectedProject.roles.map(role => (
+                    {isOpenSourceProject(selectedTemplate) && selectedTemplate.roles
+                      ? selectedTemplate.roles.map(role => (
                         <Badge key={role} className="bg-slate-100 text-slate-700 border border-slate-300">{role}</Badge>
                       ))
                       : <Badge className="bg-slate-100 text-slate-500 border border-slate-300">N/A</Badge>
