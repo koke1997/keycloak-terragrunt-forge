@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { expandedXPRoles, type XPRole } from "@/components/XPExpandedRoles";
 import { ProjectBuilderHeader } from "@/components/ProjectBuilderHeader";
@@ -114,6 +113,7 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
         onLLMConfigChange={setLLMConfig}
         onIterationSettingsChange={setIterationSettings}
         onRequirementsChange={setCustomRequirements}
+        filterRoles={selectedRoles}
       />
 
       <ProjectBuilderActions

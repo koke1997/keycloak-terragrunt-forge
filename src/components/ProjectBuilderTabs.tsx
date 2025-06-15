@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -49,6 +48,7 @@ interface ProjectBuilderTabsProps {
   onLLMConfigChange: (config: LLMConfig) => void;
   onIterationSettingsChange: (settings: any) => void;
   onRequirementsChange: (requirements: string) => void;
+  filterRoles: string[];
 }
 
 export function ProjectBuilderTabs({
@@ -65,7 +65,8 @@ export function ProjectBuilderTabs({
   onRoleUpdate,
   onLLMConfigChange,
   onIterationSettingsChange,
-  onRequirementsChange
+  onRequirementsChange,
+  filterRoles
 }: ProjectBuilderTabsProps) {
   return (
     <Tabs defaultValue="projects" className="w-full">
@@ -87,6 +88,7 @@ export function ProjectBuilderTabs({
           projectName={projectName}
           onProjectSelect={onProjectSelect}
           onProjectNameChange={onProjectNameChange}
+          filterRoles={filterRoles}
         />
       </TabsContent>
 
