@@ -11,13 +11,17 @@ import {
   Play,
   Zap,
   Workflow,
-  Target
+  Target,
+  Shield,
+  Bot
 } from "lucide-react";
 import { XPExpandedRoles, expandedXPRoles, type XPRole } from "@/components/XPExpandedRoles";
 import { ProjectSelector } from "@/components/ProjectSelector";
 import { LLMConfigPanel } from "@/components/LLMConfigPanel";
 import { WorkflowSettingsPanel } from "@/components/WorkflowSettingsPanel";
 import { AdvancedSettingsPanel } from "@/components/AdvancedSettingsPanel";
+import { AIAgentManagement } from "@/components/AIAgentManagement";
+import { EnhancedComplianceGenerator } from "@/components/EnhancedComplianceGenerator";
 
 interface LLMConfig {
   provider: 'ollama' | 'llamacpp' | 'openai-compatible';
@@ -79,6 +83,11 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
     setShowRoleDialog(true);
   };
 
+  const handleRoleUpdate = (roleId: string, updates: Partial<XPRole>) => {
+    // Update role configurations
+    console.log('Updating role:', roleId, updates);
+  };
+
   const handleGenerateProject = () => {
     if (!selectedProject) return;
 
@@ -93,7 +102,9 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
         workflowOptimization: iterationSettings.workflowOptimization,
         realTimeTraining: iterationSettings.realTimeTraining,
         expandedRoles: true,
-        advancedMetrics: true
+        advancedMetrics: true,
+        aiAgentManagement: true,
+        complianceGenerator: true
       },
       timestamp: new Date().toISOString()
     };
@@ -109,7 +120,7 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
           Enhanced AI-Powered XP Project Builder
         </h2>
         <p className="text-muted-foreground">
-          Advanced workflow optimization with expanded roles and real-time model training
+          Advanced workflow optimization with expanded roles, AI agent management, and compliance automation
         </p>
       </div>
 
@@ -132,22 +143,24 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
             </div>
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-orange-600" />
-              <span className="text-sm font-medium">Expanded Role Library</span>
+              <span className="text-sm font-medium">21+ Specialized Roles</span>
             </div>
             <div className="flex items-center gap-2">
-              <Brain className="w-4 h-4 text-purple-600" />
-              <span className="text-sm font-medium">Advanced AI Features</span>
+              <Bot className="w-4 h-4 text-purple-600" />
+              <span className="text-sm font-medium">AI Agent Swarm</span>
             </div>
           </div>
         </CardContent>
       </Card>
 
       <Tabs defaultValue="projects" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="projects">Projects</TabsTrigger>
           <TabsTrigger value="roles">Enhanced Roles</TabsTrigger>
           <TabsTrigger value="llm">LLM Config</TabsTrigger>
           <TabsTrigger value="workflow">Workflow</TabsTrigger>
+          <TabsTrigger value="agents">AI Agents</TabsTrigger>
+          <TabsTrigger value="compliance">Compliance</TabsTrigger>
           <TabsTrigger value="advanced">Advanced</TabsTrigger>
         </TabsList>
 
@@ -198,6 +211,17 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
             iterationSettings={iterationSettings}
             onSettingsChange={setIterationSettings}
           />
+        </TabsContent>
+
+        <TabsContent value="agents" className="space-y-4">
+          <AIAgentManagement
+            selectedRoles={selectedRoles}
+            onRoleUpdate={handleRoleUpdate}
+          />
+        </TabsContent>
+
+        <TabsContent value="compliance" className="space-y-4">
+          <EnhancedComplianceGenerator />
         </TabsContent>
 
         <TabsContent value="advanced" className="space-y-4">
@@ -255,6 +279,16 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
                   ))}
                 </div>
               </div>
+              {selectedRole.aiTrainingTopics && (
+                <div>
+                  <h4 className="font-medium mb-2">AI Training Topics:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedRole.aiTrainingTopics.map(topic => (
+                      <Badge key={topic} variant="secondary">{topic}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div>
                 <h4 className="font-medium mb-2">AI Assistant Personality:</h4>
                 <p className="text-sm text-muted-foreground bg-gray-50 p-3 rounded">
