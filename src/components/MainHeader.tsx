@@ -4,15 +4,16 @@ import { Zap, FileText, Layers, Settings, Rocket, Brain, Users } from "lucide-re
 
 export function MainHeader() {
   return (
-    <div className="text-center">
-      <h1 className="text-4xl font-bold mb-2 flex items-center justify-center gap-2">
-        <Zap className="w-8 h-8 text-blue-600" />
+    <div className="text-center animate-fade-in mb-4">
+      <h1 className="text-3xl md:text-4xl lg:text-5xl font-playfair font-bold mb-2 flex items-center justify-center gap-2 text-gray-900 drop-shadow font-playfair">
+        <Zap className="w-8 h-8 text-blue-600 flex-shrink-0 animate-bounce" />
         Infrastructure Code Booster
       </h1>
-      <p className="text-xl text-muted-foreground mb-4">
-        Generate optimized Terragrunt infrastructure from Keycloak realms, Spring Boot apps, and more
+      <p className="text-xl text-muted-foreground mb-6 max-w-2xl mx-auto font-normal">
+        Generate optimized Terragrunt infrastructure from Keycloak realms, Spring Boot apps, and more—
+        <span className="text-purple-600 font-semibold">with AI speed and open source control.</span>
       </p>
-      <div className="flex justify-center gap-2 mb-6">
+      <div className="flex justify-center gap-2 mb-6 flex-wrap">
         <Badge variant="secondary" className="flex items-center gap-1">
           <FileText className="w-3 h-3" />
           Keycloak Support
