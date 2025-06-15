@@ -1,8 +1,10 @@
 
+// Add missing Badge import
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Server, Zap, CheckCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export function DeployTab() {
   return (
@@ -58,3 +60,4 @@ export function DeployTab() {
     </div>
   );
 }
+
