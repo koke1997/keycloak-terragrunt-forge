@@ -1,3 +1,4 @@
+
 import { JsonFileUploader } from "@/components/JsonFileUploader";
 import { ConversionResults } from "@/components/ConversionResults";
 import { ComplianceTemplateSelector } from "@/components/ComplianceTemplateSelector";
@@ -58,21 +59,36 @@ export function ProjectDashboard() {
   }
 
   return (
-    <Tabs defaultValue="enhanced" className="w-full">
-      <TabsList className="grid w-full grid-cols-5">
-        <TabsTrigger value="enhanced">AI XP Builder</TabsTrigger>
-        <TabsTrigger value="templates">Project Templates</TabsTrigger>
-        <TabsTrigger value="upload">Upload Files</TabsTrigger>
-        <TabsTrigger value="compliance">Compliance</TabsTrigger>
-        <TabsTrigger value="configure">Configure</TabsTrigger>
+    <Tabs defaultValue="xp" className="w-full">
+      <TabsList className="grid w-full grid-cols-2 mb-6">
+        <TabsTrigger value="xp">AI XP Projects</TabsTrigger>
+        <TabsTrigger value="template">Standard Project Templates</TabsTrigger>
       </TabsList>
-      
-      <TabsContent value="enhanced" className="space-y-6">
-        {/* Guidance stepper is now rendered in EnhancedProjectBuilder */}
+
+      {/* --- AI XP Projects Tab --- */}
+      <TabsContent value="xp" className="space-y-6">
+        <Card className="mb-2 border-l-4 border-l-purple-500 bg-purple-50">
+          <CardHeader>
+            <CardTitle className="text-purple-900 flex items-center gap-2">AI XP Projects</CardTitle>
+            <CardDescription className="text-purple-800">
+              Full AI-powered project lifecycle: Use the AI XP Builder to plan, generate, and iterate on projects collaboratively with AI agents and enhanced workflows.
+            </CardDescription>
+          </CardHeader>
+        </Card>
         <EnhancedProjectBuilder onProjectGenerate={handleEnhancedProjectGenerate} />
       </TabsContent>
 
-      <TabsContent value="templates" className="space-y-6">
+      {/* --- Standard Project Templates Tab --- */}
+      <TabsContent value="template" className="space-y-6">
+        <Card className="mb-2 border-l-4 border-l-slate-500 bg-slate-50">
+          <CardHeader>
+            <CardTitle className="text-slate-900 flex items-center gap-2">Standard Project Templates</CardTitle>
+            <CardDescription className="text-slate-700">
+              Start with a prebuilt infrastructure template and configure it manually. Perfect if you want to generate ready-to-deploy Terragrunt/IaC but don&apos;t want the enhanced AI XP workflow.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+
         <ProjectTypeSelector onProjectSelect={handleProjectSelect} />
         
         {selectedProject && (
@@ -100,50 +116,6 @@ export function ProjectDashboard() {
               </div>
             </CardContent>
           </Card>
-        )}
-      </TabsContent>
-
-      <TabsContent value="upload" className="space-y-6">
-        <JsonFileUploader files={files} onFilesChange={setFiles} />
-
-        <div className="flex gap-4">
-          <Button
-            disabled={files.length === 0 || processing}
-            onClick={handleConvertAll}
-          >
-            Generate Modules ({files.length})
-          </Button>
-          <Button
-            variant="secondary"
-            disabled={files.length === 0}
-            onClick={() => setResults([])}
-          >
-            Clear Results
-          </Button>
-        </div>
-
-        <ConversionResults results={results} onCopy={handleCopy} />
-      </TabsContent>
-
-      <TabsContent value="compliance" className="space-y-6">
-        <ComplianceTemplateSelector onTemplateSelect={handleTemplateSelect} />
-      </TabsContent>
-
-      <TabsContent value="configure" className="space-y-6">
-        {!selectedProject ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>Select a Project Template First</CardTitle>
-              <CardDescription>
-                Go to the "Project Templates" tab to choose a template before configuring infrastructure settings.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        ) : (
-          <TerragruntConfigPanel 
-            onConfigChange={handleConfigChange}
-            onGenerateCode={handleGenerateCode}
-          />
         )}
       </TabsContent>
     </Tabs>
