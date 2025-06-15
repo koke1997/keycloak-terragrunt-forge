@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { expandedXPRoles, type XPRole } from "@/components/XPExpandedRoles";
 import { ProjectBuilderHeader } from "@/components/ProjectBuilderHeader";
@@ -13,6 +14,7 @@ interface LLMConfig {
   maxTokens: number;
 }
 
+// Add roles: string[] to this interface ↓↓↓
 interface OpenSourceProject {
   id: string;
   name: string;
@@ -23,6 +25,7 @@ interface OpenSourceProject {
   category: 'web-app' | 'api' | 'full-stack' | 'mobile' | 'desktop';
   estimatedHours: string;
   learningObjectives: string[];
+  roles: string[]; // <--- fix: add roles here!
 }
 
 interface EnhancedProjectBuilderProps {
