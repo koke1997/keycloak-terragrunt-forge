@@ -12,14 +12,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Info, Users, LayoutDashboard, Rocket, LayoutList } from "lucide-react";
+import { Info, Users, LayoutDashboard, Rocket, LayoutList, Link } from "lucide-react";
 import { useProjectState } from "@/hooks/useProjectState";
 import { XPProjectStepper } from "@/components/XPProjectStepper";
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useProjects } from "@/hooks/useProjects";
 import { useState } from "react";
 
-// Modern dashboard action buttons for quick access
+// QuickActions remains unchanged
 function QuickActions() {
   return (
     <div className="flex gap-2 items-center flex-wrap mb-2 animate-fade-in">
@@ -50,6 +50,38 @@ function QuickActions() {
         </Tooltip>
       </TooltipProvider>
     </div>
+  );
+}
+
+// New "Combine Two Repositories" Service Card
+function CombineReposServiceCard() {
+  return (
+    <Card className="my-6 border rounded-lg bg-white shadow-lg max-w-md mx-auto p-0 animate-fade-in group hover:scale-[1.02] transition-all">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-lg text-indigo-800">
+          <Link className="w-5 h-5 text-indigo-500 animate-bounce" />
+          Combine Two Repositories
+        </CardTitle>
+        <CardDescription className="text-indigo-700">
+          Quickly merge or unify the features and workflows of two repositories into one—powered by this tool’s advanced AI mapping and generation.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <div className="text-muted-foreground text-sm">Describe or select the repositories you'd like to combine, and receive a smart, unified output you can edit further!</div>
+          {/* We'll provide a mock "Start Combining" action for now */}
+          <Button
+            className="bg-indigo-600 hover:bg-indigo-700 text-white mt-2"
+            onClick={() => {
+              alert("Combining repositories feature coming soon!");
+            }}
+          >
+            <Link className="w-4 h-4 mr-2" />
+            Start Combining Repositories
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -87,7 +119,6 @@ export function ProjectDashboard() {
   const selectedProject =
     projects?.find((p) => p.id === selectedProjectId) ?? null;
 
-  // Confirmation toast on select
   useEffect(() => {
     if (selectedProject) {
       toast({
@@ -98,55 +129,9 @@ export function ProjectDashboard() {
     }
   }, [selectedProject, toast]);
 
-  // New Project form state
-  const [newProjectForm, setNewProjectForm] = useState({
-    name: "",
-    description: "",
-  });
-
-  if (showXPConsole && enhancedProjectConfig) {
-    return (
-      <XPDevelopmentConsole
-        projectConfig={enhancedProjectConfig}
-        onComplete={handleXPComplete}
-      />
-    );
-  }
-
-  if (showSetupWizard && selectedTemplate) {
-    return (
-      <LocalDevSetupWizard
-        projectName={terragruntConfig?.projectName || selectedTemplate.name}
-        projectType={selectedTemplate.type}
-        onComplete={handleSetupComplete}
-      />
-    );
-  }
-
-  // This utility checks if the selectedProject is likely an OpenSourceProject
-  function isOpenSourceProject(project: any): project is {
-    estimatedHours?: string;
-    githubUrl?: string;
-    techStack?: string[];
-    category?: string;
-    learningObjectives?: string[];
-    roles?: string[];
-  } {
-    return (
-      typeof project === "object" &&
-      (project?.estimatedHours !== undefined ||
-        project?.githubUrl !== undefined ||
-        project?.techStack !== undefined ||
-        project?.category !== undefined ||
-        project?.learningObjectives !== undefined ||
-        project?.roles !== undefined)
-    );
-  }
-
   // --- UI ---
   return (
     <div className="animate-fade-in space-y-2">
-      {/* Modernized Help & Quick Start Area */}
       <Card className="mb-6 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-0 shadow-xl animate-fade-in">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl text-blue-900">
@@ -186,57 +171,115 @@ export function ProjectDashboard() {
               Your Projects
               <Badge variant="secondary">{projects?.length ?? 0}</Badge>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {projects && projects.length > 0 ? (
                 projects.map((project) => (
-                  <div
+                  <button
                     key={project.id}
-                    className={`border rounded p-4 bg-white shadow-sm group flex flex-col ${selectedProjectId === project.id ? "border-purple-500 ring-2 ring-purple-300" : "hover:border-purple-300"}`}
+                    className={`group border rounded-2xl bg-white shadow-md p-5 flex flex-col justify-between hover:shadow-xl focus:ring-2 focus:ring-purple-400 relative transition-all cursor-pointer
+                    ${selectedProjectId === project.id ? "ring-2 ring-purple-400 border-purple-500 bg-purple-50 scale-[1.015]" : "hover:border-purple-300"}
+                    `}
                     tabIndex={0}
                     aria-selected={selectedProjectId === project.id}
+                    onClick={() => setSelectedProjectId(project.id)}
+                    style={{ textAlign: "left" }}
                   >
-                    <div className="flex justify-between items-center">
-                      <div
-                        className="font-bold text-lg cursor-pointer truncate"
-                        onClick={() => setSelectedProjectId(project.id)}
-                        title={project.name}
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-bold text-xl truncate max-w-[60%]" title={project.name}>{project.name}</span>
+                      <Badge
+                        variant="secondary"
+                        className={`text-xs px-2 py-1
+                          ${project.complexity === "Beginner" ? "bg-green-100 text-green-800 border-green-200"
+                            : project.complexity === "Intermediate" ? "bg-yellow-100 text-yellow-800 border-yellow-200"
+                            : project.complexity === "Advanced" ? "bg-red-100 text-red-700 border-red-200"
+                            : "bg-gray-200 text-gray-700 border-gray-300"
+                          }
+                        `}
                       >
-                        {project.name}
-                      </div>
-                      <div className="flex gap-1">
-                        <Badge variant="outline">{project.complexity ?? "N/A"}</Badge>
-                        <button
-                          aria-label="Delete"
-                          onClick={async (e) => {
-                            e.stopPropagation();
-                            await deleteProject(project.id);
-                            toast({
-                              title: "Project Deleted",
-                              description: `"${project.name}" has been deleted.`,
-                              duration: 1800,
-                            });
-                            if (selectedProjectId === project.id) setSelectedProjectId(null);
-                          }}
-                          className="ml-2 text-xs px-2 py-0.5 rounded bg-red-100 text-red-700 hover:bg-red-200"
-                        >
-                          Delete
-                        </button>
-                      </div>
+                        {project.complexity || "N/A"}
+                      </Badge>
                     </div>
-                    <div className="text-muted-foreground mt-1 line-clamp-2 text-sm">
+                    <div className="text-muted-foreground mb-3 text-sm line-clamp-2">
                       {project.description || <span className="italic">No description</span>}
                     </div>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {project.tech_stack?.map((ts) => (
-                        <Badge key={ts} variant="secondary">{ts}</Badge>
-                      ))}
-                      {project.category && <Badge variant="outline">{project.category}</Badge>}
+                    <div>
+                      <div className="flex flex-wrap gap-1 mb-1">
+                        {project.tech_stack?.map((ts) => (
+                          <Badge
+                            key={ts}
+                            variant="outline"
+                            className="text-xs cursor-pointer hover:bg-purple-100 hover:text-purple-700 transition-colors"
+                            title={`Filter by ${ts}`}
+                            tabIndex={-1}
+                            // Add your click logic for filter here if desired
+                          >
+                            {ts}
+                          </Badge>
+                        ))}
+                        {project.category && (
+                          <Badge
+                            variant="outline"
+                            className="text-xs bg-slate-100 border-slate-200 text-slate-900"
+                          >
+                            {project.category}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap gap-1 mb-1">
+                        {project.roles?.map((role) => (
+                          <Badge
+                            key={role}
+                            className="bg-slate-100 text-slate-700 border border-slate-300 text-xs cursor-pointer hover:bg-purple-100 hover:text-purple-700"
+                            title={`Filter by ${role}`}
+                            tabIndex={-1}
+                          >
+                            {role}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                    <div className="flex justify-between items-center mt-3 gap-2">
+                      <div className="text-xs flex items-center gap-1 text-muted-foreground">
+                        ⏱️ {project.estimated_hours || "?"}
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="ml-auto group-hover:bg-purple-600 group-hover:text-white transition-all"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedProjectId(project.id);
+                          // Open a "details" modal or navigate, or just visually highlight for now.
+                          toast({
+                            title: `Project: ${project.name}`,
+                            description: project.description || "",
+                          });
+                        }}
+                      >
+                        View Details
+                      </Button>
+                      <button
+                        aria-label="Delete"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          await deleteProject(project.id);
+                          toast({
+                            title: "Project Deleted",
+                            description: `"${project.name}" has been deleted.`,
+                            duration: 1800,
+                          });
+                          if (selectedProjectId === project.id) setSelectedProjectId(null);
+                        }}
+                        className="ml-2 text-xs px-2 py-0.5 rounded bg-red-100 text-red-700 hover:bg-red-200"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </button>
                 ))
               ) : (
                 <div className="text-muted-foreground text-center col-span-full">
-                  No projects found. Create one below!
+                  No projects found. Create or combine one below!
                 </div>
               )}
             </div>
@@ -244,49 +287,8 @@ export function ProjectDashboard() {
         )}
       </div>
 
-      {/* New Project Form */}
-      <div className="my-6 border rounded-lg bg-white shadow-md max-w-md mx-auto p-6 space-y-3">
-        <div className="font-semibold text-purple-800 text-lg flex items-center gap-2">
-          + New Project
-        </div>
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            if (!newProjectForm.name) {
-              toast({ title: "Missing Project Name", description: "Please enter a project name." });
-              return;
-            }
-            await createProject({
-              name: newProjectForm.name,
-              description: newProjectForm.description,
-            });
-            setNewProjectForm({ name: "", description: "" });
-            toast({ title: "Project Created", description: "Your project has been created!" });
-          }}
-          className="space-y-3"
-        >
-          <input
-            className="w-full border rounded px-3 py-2 text-base"
-            placeholder="Project name"
-            value={newProjectForm.name}
-            onChange={e => setNewProjectForm(f => ({ ...f, name: e.target.value }))}
-            required
-          />
-          <textarea
-            className="w-full border rounded px-3 py-2"
-            placeholder="Short description (optional)"
-            value={newProjectForm.description}
-            onChange={e => setNewProjectForm(f => ({ ...f, description: e.target.value }))}
-            rows={2}
-          />
-          <button
-            className="bg-purple-600 hover:bg-purple-700 text-white rounded px-4 py-2 font-semibold"
-            type="submit"
-          >
-            Create Project
-          </button>
-        </form>
-      </div>
+      {/* Instead of the old New Project form, use the CombineReposServiceCard */}
+      <CombineReposServiceCard />
 
       <Tabs defaultValue="xp" className="w-full animate-fade-in">
         <TabsList className="grid w-full grid-cols-2 mb-6 h-14">
@@ -433,5 +435,25 @@ export function ProjectDashboard() {
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+// Helper for TS project type checks; unchanged
+function isOpenSourceProject(project: any): project is {
+  estimatedHours?: string;
+  githubUrl?: string;
+  techStack?: string[];
+  category?: string;
+  learningObjectives?: string[];
+  roles?: string[];
+} {
+  return (
+    typeof project === "object" &&
+    (project?.estimatedHours !== undefined ||
+      project?.githubUrl !== undefined ||
+      project?.techStack !== undefined ||
+      project?.category !== undefined ||
+      project?.learningObjectives !== undefined ||
+      project?.roles !== undefined)
   );
 }
