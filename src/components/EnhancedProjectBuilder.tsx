@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { expandedXPRoles, type XPRole } from "@/components/XPExpandedRoles";
 import { ProjectBuilderHeader } from "@/components/ProjectBuilderHeader";
@@ -7,8 +8,10 @@ import { ProjectBuilderDialog } from "@/components/ProjectBuilderDialog";
 import { XPProjectStepper } from "@/components/XPProjectStepper";
 import { ProjectGenerationDialog } from "@/components/ProjectGenerationDialog";
 import { toast } from "@/hooks/use-toast";
-import { Badge } from "@/components/Badge";
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/Tooltip";
+// FIXED: Import Badge from correct location
+import { Badge } from "@/components/ui/badge";
+// FIXED: Import Tooltip components from correct location
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 interface LLMConfig {
   provider: 'ollama' | 'llamacpp' | 'openai-compatible';
