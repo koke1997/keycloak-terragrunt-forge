@@ -1,4 +1,3 @@
-
 import { JsonFileUploader } from "@/components/JsonFileUploader";
 import { ConversionResults } from "@/components/ConversionResults";
 import { ComplianceTemplateSelector } from "@/components/ComplianceTemplateSelector";
@@ -13,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Rocket } from "lucide-react";
 import { useProjectState } from "@/hooks/useProjectState";
+import { XPProjectStepper } from "@/components/XPProjectStepper";
 
 export function ProjectDashboard() {
   const {
@@ -68,6 +68,7 @@ export function ProjectDashboard() {
       </TabsList>
       
       <TabsContent value="enhanced" className="space-y-6">
+        {/* Guidance stepper is now rendered in EnhancedProjectBuilder */}
         <EnhancedProjectBuilder onProjectGenerate={handleEnhancedProjectGenerate} />
       </TabsContent>
 
