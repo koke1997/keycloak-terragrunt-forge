@@ -1,10 +1,23 @@
-
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
 
-const steps = [
+/**
+ * Dynamic steps now support optional per-step tips and can be customized for context.
+ */
+export interface XPStepInfo {
+  key: string;
+  label: string;
+  tip: string;
+}
+
+export interface XPProjectStepperProps {
+  currentStep: number;
+  steps?: XPStepInfo[];
+}
+
+const defaultSteps: XPStepInfo[] = [
   {
     key: "select-project",
     label: "1. Select Project",
@@ -12,31 +25,27 @@ const steps = [
   },
   {
     key: "select-roles",
-    label: "2. Choose Roles",
-    tip: "Pick which AI agents or roles will be active in the project."
+    label: "2. Choose Team Skills",
+    tip: "Select cross-functional skills and best-practice roles to apply (eg: DevOps, Security, UX, QA, AI, Docs)."
   },
   {
     key: "llm-config",
     label: "3. LLM & Workflow",
-    tip: "Configure your local LLM and how your XP team will collaborate."
+    tip: "Configure your local LLM (llama.cpp) or cloud LLMs (Hugging Face, OpenAI, GitHub Copilot)."
   },
   {
     key: "features",
     label: "4. Extra Features",
-    tip: "Fine-tune project requirements or enable advanced options."
+    tip: "Extend with integrations or advanced options (logging, observability, accessibility, etc)."
   },
   {
     key: "generate",
     label: "5. Generate!",
-    tip: "Review the summary and launch your enhanced XP Project!"
+    tip: "Review and launch your enhanced XP project!"
   }
 ];
 
-interface XPProjectStepperProps {
-  currentStep: number;
-}
-
-export function XPProjectStepper({ currentStep }: XPProjectStepperProps) {
+export function XPProjectStepper({ currentStep, steps = defaultSteps }: XPProjectStepperProps) {
   return (
     <div className="sticky top-24 z-10 w-full max-w-xs bg-white border rounded-lg shadow-sm p-4 mb-4 animate-fade-in">
       <h4 className="font-semibold text-lg mb-2 flex items-center gap-1">
@@ -65,7 +74,7 @@ export function XPProjectStepper({ currentStep }: XPProjectStepperProps) {
         ))}
       </div>
       <div className="mt-6 text-xs text-muted-foreground">
-        Tip: Complete each step for best project results. More help is available on button/tooltips throughout the builder!
+        Tip: Steps and tips will update contextually as you progress. Hover on tooltips for additional advice!
       </div>
     </div>
   );

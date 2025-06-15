@@ -19,6 +19,12 @@ interface ProjectSelectorProps {
   filterRoles?: string[];
 }
 
+// Curated list of skills/best-practice roles for filters, inspired by awesome lists & real job functions
+const awesomeRoles = [
+  'developer', 'designer', 'product manager', 'security', 'devops', 'qa', 'ai practitioner', 'researcher',
+  'customer', 'technical writer', 'ux designer', 'data analyst', 'customer success', 'manager'
+];
+
 export function ProjectSelector({
   selectedProject,
   projectName,
@@ -26,13 +32,33 @@ export function ProjectSelector({
   onProjectNameChange,
   filterRoles = []
 }: ProjectSelectorProps) {
-  // Filter projects based on selected roles
+  // Filter projects based on selected skills/best-practice roles
   const filteredProjects = filterRoles.length === 0
     ? openSourceProjects
     : openSourceProjects.filter(project => arrayIntersect(project.roles, filterRoles));
 
   return (
     <div className="space-y-6">
+      {/* Skills/Practice Role Filter */}
+      <div className="flex flex-wrap gap-2 mb-2">
+        <span className="text-xs text-muted-foreground">Filter by skill/practice area:</span>
+        {awesomeRoles.map(role => (
+          <Badge
+            key={role}
+            className={`
+              cursor-pointer ${filterRoles.includes(role) ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-700 border border-slate-300'}
+            `}
+            onClick={() =>
+              filterRoles.includes(role)
+                ? onProjectNameChange('')
+                : onProjectNameChange(role)
+            }
+          >
+            {role}
+          </Badge>
+        ))}
+      </div>
+
       {/* Responsive Projects Grid */}
       <div className="
         grid 

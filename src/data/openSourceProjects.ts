@@ -1,4 +1,3 @@
-
 /**
  * Central list of available open source projects for the ProjectSelector UI.
  * Add as many projects here as you like!
@@ -113,5 +112,137 @@ export const openSourceProjects: OpenSourceProject[] = [
     estimatedHours: '50-75 hours',
     learningObjectives: ['Payments integration', 'Order management', 'Role-based access'],
     roles: ['developer', 'designer', 'security', 'customer', 'manager']
+  },
+  // Added from "awesome lists" and modern open source inspirations
+  {
+    id: 'github-explorer',
+    name: 'GitHub Repo Explorer',
+    description: 'Visualize and analyze GitHub repositories, contributors, and issues with charts and AI summaries.',
+    githubUrl: 'https://github.com/benbalter/github-repo-explorer',
+    techStack: ['React', 'TypeScript', 'GitHub API', 'Recharts', 'Vercel'],
+    complexity: 'Intermediate',
+    category: 'web-app',
+    estimatedHours: '12-20 hours',
+    learningObjectives: [
+      'API consumption',
+      'OAuth integration',
+      'Data visualization',
+      'Repository analytics'
+    ],
+    roles: ['developer', 'data analyst', 'product manager']
+  },
+  {
+    id: 'ml-playground',
+    name: 'ML Playground',
+    description: 'Experiment with machine learning models (Hugging Face, llama.cpp, ONNX) in the browser with widgets for text and vision.',
+    githubUrl: 'https://github.com/huggingface/ml-playground',
+    techStack: ['React', 'TypeScript', 'Hugging Face', 'onnxruntime-web', 'Web Workers'],
+    complexity: 'Advanced',
+    category: 'web-app',
+    estimatedHours: '30-60 hours',
+    learningObjectives: [
+      'Model inference',
+      'Web workers',
+      'Hugging Face API',
+      'Interactive UI'
+    ],
+    roles: ['machine learning engineer', 'developer', 'researcher']
+  },
+  {
+    id: 'oss-crm',
+    name: 'Open Source CRM',
+    description: 'Lightweight CRM with user auth, Kanban board, and system for tracking leads and communications.',
+    githubUrl: 'https://github.com/awesome-crm/oss-crm',
+    techStack: ['React', 'TypeScript', 'Supabase', 'Tailwind CSS'],
+    complexity: 'Intermediate',
+    category: 'full-stack',
+    estimatedHours: '18-26 hours',
+    learningObjectives: [
+      'User authentication',
+      'CRUD features',
+      'Kanban UI',
+      'Real-time updates'
+    ],
+    roles: ['product manager', 'customer success', 'developer']
+  },
+  {
+    id: 'openapi-doc-tool',
+    name: 'OpenAPI Doc Generator',
+    description: 'Generate beautiful, interactive documentation for APIs from OpenAPI/Swagger files.',
+    githubUrl: 'https://github.com/Redocly/redoc',
+    techStack: ['React', 'TypeScript', 'Swagger', 'Markdown', 'Docker'],
+    complexity: 'Beginner',
+    category: 'web-app',
+    estimatedHours: '8-14 hours',
+    learningObjectives: [
+      'Parsing schemas',
+      'Markdown rendering',
+      'Documentation UX'
+    ],
+    roles: ['developer', 'technical writer', 'designer']
+  },
+  {
+    id: 'data-viz-dashboard',
+    name: 'Data Visualization Dashboard',
+    description: 'Drag and drop dashboard for uploading datasets (CSV/JSON) and building interactive charts.',
+    githubUrl: 'https://github.com/keen/dashboards',
+    techStack: ['React', 'TypeScript', 'Recharts', 'PapaParse'],
+    complexity: 'Intermediate',
+    category: 'web-app',
+    estimatedHours: '15-22 hours',
+    learningObjectives: [
+      'File uploads',
+      'Dynamic charting',
+      'Drag-and-drop UX'
+    ],
+    roles: ['data analyst', 'developer', 'UX designer']
+  },
+  {
+    id: 'free-chatgpt-ui',
+    name: 'Free ChatGPT UI',
+    description: 'Open-source chat UI supporting multiple LLMs (OpenAI, Hugging Face, llama.cpp) with local or cloud endpoints.',
+    githubUrl: 'https://github.com/lobehub/lobe-chat',
+    techStack: ['React', 'TypeScript', 'Socket.IO', 'Hugging Face', 'llama.cpp'],
+    complexity: 'Intermediate',
+    category: 'web-app',
+    estimatedHours: '10-18 hours',
+    learningObjectives: [
+      'LLM integration',
+      'Socket connections',
+      'Local model/remote API switching'
+    ],
+    roles: ['AI practitioner', 'developer', 'student']
+  },
+  {
+    id: 'open-resume',
+    name: 'Open Resume Generator',
+    description: 'Modern resume/CV builder that exports PDFs, integrates with GitHub and automates formatting.',
+    githubUrl: 'https://github.com/open-resume/open-resume',
+    techStack: ['React', 'TypeScript', 'PDF', 'Tailwind CSS'],
+    complexity: 'Beginner',
+    category: 'web-app',
+    estimatedHours: '5-10 hours',
+    learningObjectives: [
+      'PDF generation',
+      'User customization',
+      'GitHub OAuth'
+    ],
+    roles: ['designer', 'developer', 'job seeker']
+  },
+  {
+    id: 'openkanban',
+    name: 'Open Kanban Board',
+    description: 'A Trello-like Kanban board app with real-time updates, team sharing, and advanced UX.',
+    githubUrl: 'https://github.com/openkanban/openkanban',
+    techStack: ['React', 'TypeScript', 'Socket.IO', 'Tailwind CSS', 'Supabase'],
+    complexity: 'Intermediate',
+    category: 'web-app',
+    estimatedHours: '15-24 hours',
+    learningObjectives: [
+      'Real-time sync',
+      'Board UI patterns',
+      'User collaboration'
+    ],
+    roles: ['product manager', 'developer', 'designer']
   }
 ];
