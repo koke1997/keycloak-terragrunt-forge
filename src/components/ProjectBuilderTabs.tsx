@@ -23,6 +23,7 @@ interface OpenSourceProject {
   category: 'web-app' | 'api' | 'full-stack' | 'mobile' | 'desktop';
   estimatedHours: string;
   learningObjectives: string[];
+  roles: string[]; // <-- Added this property!
 }
 
 interface LLMConfig {
