@@ -1,23 +1,20 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
-import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   Play, 
-  Pause, 
-  RotateCcw, 
   MessageSquare, 
   GitCommit,
   CheckCircle,
-  AlertCircle,
-  Clock,
+  RotateCcw,
   Users,
   Brain
 } from "lucide-react";
+import { XPIterationStatus } from "@/components/XPIterationStatus";
+import { XPRoleSelector } from "@/components/XPRoleSelector";
+import { XPConversation } from "@/components/XPConversation";
+import { XPIterationHistory } from "@/components/XPIterationHistory";
 
 interface XPIteration {
   id: string;
@@ -68,7 +65,6 @@ export function XPDevelopmentConsole({ projectConfig, onComplete }: XPDevelopmen
       estimatedEndTime: new Date(Date.now() + (projectConfig.iterationSettings.iterationLength === 'daily' ? 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000))
     };
 
-    // Add initial planning message
     const initialMessage: XPMessage = {
       id: `msg-${Date.now()}`,
       role: 'customer',
@@ -101,7 +97,6 @@ export function XPDevelopmentConsole({ projectConfig, onComplete }: XPDevelopmen
     setCurrentIteration(updatedIteration);
     setUserInput('');
 
-    // Simulate AI role response
     setTimeout(() => {
       const aiResponse = generateRoleResponse(currentIteration.activeRole, userInput);
       const aiMessage: XPMessage = {
@@ -205,16 +200,7 @@ export function XPDevelopmentConsole({ projectConfig, onComplete }: XPDevelopmen
             Start First Iteration
           </Button>
           
-          {iterationHistory.length > 0 && (
-            <div className="mt-6">
-              <h4 className="font-medium mb-2">Previous Iterations</h4>
-              {iterationHistory.map((iteration, index) => (
-                <Badge key={iteration.id} variant="secondary" className="mr-2">
-                  Iteration {index + 1} - Completed
-                </Badge>
-              ))}
-            </div>
-          )}
+          <XPIterationHistory iterationHistory={iterationHistory} />
         </CardContent>
       </Card>
     );
@@ -222,114 +208,27 @@ export function XPDevelopmentConsole({ projectConfig, onComplete }: XPDevelopmen
 
   return (
     <div className="max-w-6xl mx-auto space-y-4">
-      {/* Iteration Status */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5" />
-              Current Iteration - {phases.find(p => p.id === currentIteration?.phase)?.name}
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={nextPhase}>
-                Next Phase
-              </Button>
-              <Button variant="outline" size="sm" onClick={completeIteration}>
-                Complete Iteration
-              </Button>
-            </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              {phases.map(phase => (
-                <div
-                  key={phase.id}
-                  className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm ${
-                    currentIteration?.phase === phase.id
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-gray-100 text-gray-600'
-                  }`}
-                >
-                  {phase.icon}
-                  {phase.name}
-                </div>
-              ))}
-            </div>
-            <Progress value={currentIteration?.progress || 0} className="w-full" />
-          </div>
-        </CardContent>
-      </Card>
+      <XPIterationStatus
+        currentIteration={currentIteration!}
+        phases={phases}
+        onNextPhase={nextPhase}
+        onCompleteIteration={completeIteration}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Role Selector */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Active Roles</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {projectConfig.roles.map((role: any) => (
-                <Button
-                  key={role.id}
-                  variant={currentIteration?.activeRole === role.id ? "default" : "outline"}
-                  className="w-full justify-start"
-                  onClick={() => switchRole(role.id)}
-                >
-                  {role.icon}
-                  <span className="ml-2">{role.name}</span>
-                </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <XPRoleSelector
+          projectConfig={projectConfig}
+          activeRole={currentIteration!.activeRole}
+          onRoleSwitch={switchRole}
+        />
 
-        {/* Conversation */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Development Conversation</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ScrollArea className="h-96 mb-4">
-              <div className="space-y-4">
-                {currentIteration?.messages.map(message => (
-                  <div
-                    key={message.id}
-                    className={`p-3 rounded-lg ${
-                      message.role === 'user'
-                        ? 'bg-blue-50 ml-8'
-                        : 'bg-gray-50 mr-8'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      <Badge variant="outline" className="text-xs">
-                        {message.role === 'user' ? 'You' : 
-                         projectConfig.roles.find((r: any) => r.id === message.role)?.name || message.role}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">
-                        {message.timestamp.toLocaleTimeString()}
-                      </span>
-                    </div>
-                    <p className="text-sm">{message.content}</p>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-            
-            <div className="flex gap-2">
-              <Textarea
-                placeholder="Share your thoughts, feedback, or requirements..."
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendMessage())}
-              />
-              <Button onClick={sendMessage} disabled={!userInput.trim()}>
-                Send
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <XPConversation
+          messages={currentIteration!.messages}
+          projectConfig={projectConfig}
+          userInput={userInput}
+          onUserInputChange={setUserInput}
+          onSendMessage={sendMessage}
+        />
       </div>
     </div>
   );
