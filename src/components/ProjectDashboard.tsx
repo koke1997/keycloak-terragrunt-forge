@@ -18,6 +18,7 @@ import { XPProjectStepper } from "@/components/XPProjectStepper";
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useProjects } from "@/hooks/useProjects";
 import { useState } from "react";
+import { CombineRepositoriesForm } from "@/components/CombineRepositoriesForm";
 
 // QuickActions remains unchanged
 function QuickActions() {
@@ -287,8 +288,8 @@ export function ProjectDashboard() {
         )}
       </div>
 
-      {/* Instead of the old New Project form, use the CombineReposServiceCard */}
-      <CombineReposServiceCard />
+      {/* Replace the old CombineReposServiceCard with the OOP-powered form */}
+      <CombineRepositoriesForm />
 
       <Tabs defaultValue="xp" className="w-full animate-fade-in">
         <TabsList className="grid w-full grid-cols-2 mb-6 h-14">
