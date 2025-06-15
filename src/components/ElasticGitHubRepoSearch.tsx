@@ -110,14 +110,18 @@ export function ElasticGitHubRepoSearch() {
         )}
 
         <div>
-          <Input
-            placeholder="Search for repositories (e.g. nextjs)"
-            disabled={!token}
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            className="mb-1"
-            icon={<Search className="w-4 h-4 opacity-70 mr-2" />}
-          />
+          <div className="relative flex items-center">
+            <span className="absolute left-2">
+              <Search className="w-4 h-4 opacity-70" />
+            </span>
+            <Input
+              placeholder="Search for repositories (e.g. nextjs)"
+              disabled={!token}
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              className="mb-1 pl-8"
+            />
+          </div>
         </div>
 
         {loading && <div className="py-2 text-sm text-indigo-600">Searching GitHub…</div>}
