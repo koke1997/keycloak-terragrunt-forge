@@ -4,19 +4,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { openSourceProjects, OpenSourceProject } from "@/data/openSourceProjects";
 
-// Add roles property
-interface OpenSourceProject {
-  id: string;
-  name: string;
-  description: string;
-  githubUrl: string;
-  techStack: string[];
-  complexity: 'Beginner' | 'Intermediate' | 'Advanced';
-  category: 'web-app' | 'api' | 'full-stack' | 'mobile' | 'desktop';
-  estimatedHours: string;
-  learningObjectives: string[];
-  roles: string[]; // AGENTS/ROLES THIS PROJECT SUPPORTS
+// Utility to check project-role intersection
+function arrayIntersect(a: string[], b: string[]) {
+  return a.some(x => b.includes(x));
 }
 
 interface ProjectSelectorProps {
@@ -24,81 +16,13 @@ interface ProjectSelectorProps {
   projectName: string;
   onProjectSelect: (project: OpenSourceProject) => void;
   onProjectNameChange: (name: string) => void;
-  filterRoles?: string[]; // New: which roles are active
+  filterRoles?: string[];
 }
 
-// Sample mapping for demonstration: projects are tagged with supported role ids.
-const openSourceProjects: OpenSourceProject[] = [
-  {
-    id: 'react-todo',
-    name: 'Advanced Todo App',
-    description: 'Feature-rich todo application with real-time sync, drag-and-drop, and team collaboration',
-    githubUrl: 'https://github.com/example/react-todo-advanced',
-    techStack: ['React', 'TypeScript', 'Supabase', 'Tailwind CSS', 'Framer Motion'],
-    complexity: 'Intermediate',
-    category: 'web-app',
-    estimatedHours: '15-25 hours',
-    learningObjectives: ['State management', 'Real-time updates', 'Authentication', 'UI animations'],
-    roles: ['developer', 'designer', 'customer'] // add any roles supported
-  },
-  {
-    id: 'expense-tracker',
-    name: 'Personal Finance Tracker',
-    description: 'Comprehensive expense tracking with budgets, categories, and financial insights',
-    githubUrl: 'https://github.com/example/expense-tracker',
-    techStack: ['React', 'TypeScript', 'Chart.js', 'Supabase', 'PWA'],
-    complexity: 'Advanced',
-    category: 'full-stack',
-    estimatedHours: '30-45 hours',
-    learningObjectives: ['Data visualization', 'Complex state', 'PWA features', 'Financial calculations'],
-    roles: ['developer', 'customer', 'security']
-  },
-  {
-    id: 'blog-platform',
-    name: 'Modern Blog Platform',
-    description: 'Multi-author blog platform with rich text editor, comments, and SEO optimization',
-    githubUrl: 'https://github.com/example/blog-platform',
-    techStack: ['React', 'TypeScript', 'TinyMCE', 'Supabase', 'React Query'],
-    complexity: 'Advanced',
-    category: 'full-stack',
-    estimatedHours: '40-60 hours',
-    learningObjectives: ['Rich text editing', 'SEO optimization', 'Multi-user systems', 'Content management'],
-    roles: ['developer', 'designer', 'customer', 'seo']
-  },
-  {
-    id: 'task-manager',
-    name: 'Team Task Manager',
-    description: 'Kanban-style task management with team collaboration and time tracking',
-    githubUrl: 'https://github.com/example/task-manager',
-    techStack: ['React', 'TypeScript', 'DnD Kit', 'Supabase', 'WebSockets'],
-    complexity: 'Intermediate',
-    category: 'web-app',
-    estimatedHours: '20-35 hours',
-    learningObjectives: ['Drag and drop', 'Real-time collaboration', 'Project management', 'Time tracking'],
-    roles: ['developer', 'designer', 'manager', 'customer']
-  },
-  {
-    id: 'recipe-app',
-    name: 'Recipe Collection App',
-    description: 'Recipe management with meal planning, shopping lists, and nutritional info',
-    githubUrl: 'https://github.com/example/recipe-app',
-    techStack: ['React', 'TypeScript', 'Supabase', 'PWA', 'Camera API'],
-    complexity: 'Beginner',
-    category: 'web-app',
-    estimatedHours: '10-20 hours',
-    learningObjectives: ['CRUD operations', 'Image handling', 'PWA basics', 'Local storage'],
-    roles: ['developer', 'customer']
-  }
-];
-
-function arrayIntersect(a: string[], b: string[]) {
-  return a.some(x => b.includes(x));
-}
-
-export function ProjectSelector({ 
-  selectedProject, 
-  projectName, 
-  onProjectSelect, 
+export function ProjectSelector({
+  selectedProject,
+  projectName,
+  onProjectSelect,
   onProjectNameChange,
   filterRoles = []
 }: ProjectSelectorProps) {
@@ -108,8 +32,20 @@ export function ProjectSelector({
     : openSourceProjects.filter(project => arrayIntersect(project.roles, filterRoles));
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="space-y-6">
+      {/* Responsive Projects Grid */}
+      <div className="
+        grid 
+        grid-cols-1 
+        sm:grid-cols-2 
+        lg:grid-cols-3 
+        xl:grid-cols-4 
+        2xl:grid-cols-5 
+        gap-6
+        max-h-[64vh] 
+        overflow-y-auto 
+        pr-3
+      ">
         {filteredProjects.length === 0 ? (
           <div className="col-span-full text-center text-muted-foreground py-10">
             <p className="text-lg">No projects available for the selected agents.</p>
@@ -119,55 +55,71 @@ export function ProjectSelector({
           filteredProjects.map(project => (
             <Card 
               key={project.id}
-              className={`cursor-pointer transition-all ${
-                selectedProject?.id === project.id 
-                  ? 'border-purple-500 shadow-lg bg-purple-50' 
-                  : 'hover:shadow-md'
-              }`}
+              className={`
+                cursor-pointer transition-all h-full 
+                flex flex-col 
+                justify-between
+                border-2
+                ${selectedProject?.id === project.id 
+                  ? 'border-purple-500 shadow-2xl bg-purple-50 scale-[1.03]' 
+                  : 'hover:shadow-md hover:scale-[1.015] border-muted-foreground/10'
+                }
+                min-w-0
+              `}
               onClick={() => onProjectSelect(project)}
+              tabIndex={0}
+              aria-selected={selectedProject?.id === project.id}
             >
               <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>{project.name}</span>
+                <CardTitle className="flex items-center justify-between text-base">
+                  <span className="truncate max-w-[75%]" title={project.name}>{project.name}</span>
                   <Badge variant={project.complexity === 'Beginner' ? 'secondary' : 
                          project.complexity === 'Intermediate' ? 'default' : 'destructive'}>
                     {project.complexity}
                   </Badge>
                 </CardTitle>
-                <CardDescription>{project.description}</CardDescription>
+                <CardDescription className="h-12 line-clamp-2">{project.description}</CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-sm font-medium mb-1">Tech Stack:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {project.techStack.map(tech => (
-                        <Badge key={tech} variant="outline" className="text-xs">{tech}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium mb-1">Learning Objectives:</p>
-                    <ul className="text-xs text-muted-foreground">
-                      {project.learningObjectives.slice(0, 2).map(obj => (
-                        <li key={obj}>• {obj}</li>
-                      ))}
-                      {project.learningObjectives.length > 2 && (
-                        <li>• +{project.learningObjectives.length - 2} more...</li>
-                      )}
-                    </ul>
-                  </div>
-                  <div className="flex justify-between items-center text-sm text-muted-foreground">
-                    <span>⏱️ {project.estimatedHours}</span>
-                    <Badge variant="secondary">{project.category}</Badge>
-                  </div>
-                  <div className="flex flex-wrap gap-1 pt-2">
-                    {project.roles.map(role => (
-                      <Badge key={role} className="bg-slate-100 text-slate-700 border border-slate-300 text-xs">
-                        {role}
-                      </Badge>
+              <CardContent className="flex flex-col gap-2 text-xs pt-0 flex-1">
+                <div>
+                  <p className="font-medium mb-1">Tech Stack:</p>
+                  <div className="flex flex-wrap gap-1">
+                    {project.techStack.map(tech => (
+                      <Badge key={tech} variant="outline" className="text-xs">{tech}</Badge>
                     ))}
                   </div>
+                </div>
+                <div>
+                  <p className="font-medium mb-1">Learning Objectives:</p>
+                  <ul className="list-disc pl-5">
+                    {project.learningObjectives.slice(0, 2).map(obj => (
+                      <li key={obj}>{obj}</li>
+                    ))}
+                    {project.learningObjectives.length > 2 && (
+                      <li>+{project.learningObjectives.length - 2} more...</li>
+                    )}
+                  </ul>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>⏱️ {project.estimatedHours}</span>
+                  <Badge variant="secondary">{project.category}</Badge>
+                </div>
+                <div className="flex flex-wrap gap-1 pt-2">
+                  {project.roles.map(role => (
+                    <Badge key={role} className="bg-slate-100 text-slate-700 border border-slate-300 text-xs">
+                      {role}
+                    </Badge>
+                  ))}
+                </div>
+                <div className="mt-1">
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-purple-700 underline text-xs hover:text-purple-900"
+                  >
+                    GitHub Repo
+                  </a>
                 </div>
               </CardContent>
             </Card>
@@ -175,6 +127,7 @@ export function ProjectSelector({
         )}
       </div>
 
+      {/* Selected Project Details & Custom Name */}
       {selectedProject && (
         <Card className="border-green-200 bg-green-50">
           <CardHeader>
@@ -182,13 +135,14 @@ export function ProjectSelector({
               <Badge className="bg-green-600">Selected</Badge>
               {selectedProject.name}
             </CardTitle>
-            <div className="space-y-2">
+            <div className="space-y-2 mt-2">
               <Label htmlFor="projectName">Custom Project Name (Optional)</Label>
               <Input
                 id="projectName"
                 placeholder={selectedProject.name}
                 value={projectName}
                 onChange={(e) => onProjectNameChange(e.target.value)}
+                className="max-w-md"
               />
             </div>
           </CardHeader>
@@ -197,3 +151,4 @@ export function ProjectSelector({
     </div>
   );
 }
+
