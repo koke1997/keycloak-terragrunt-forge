@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { JsonFileUploader } from "@/components/JsonFileUploader";
 import { ConversionResults } from "@/components/ConversionResults";
@@ -108,6 +107,26 @@ export function ProjectDashboard() {
     );
   }
 
+  // This utility checks if the selectedProject is likely an OpenSourceProject
+  function isOpenSourceProject(project: any): project is {
+    estimatedHours?: string;
+    githubUrl?: string;
+    techStack?: string[];
+    category?: string;
+    learningObjectives?: string[];
+    roles?: string[];
+  } {
+    return (
+      typeof project === "object" &&
+      (project?.estimatedHours !== undefined ||
+        project?.githubUrl !== undefined ||
+        project?.techStack !== undefined ||
+        project?.category !== undefined ||
+        project?.learningObjectives !== undefined ||
+        project?.roles !== undefined)
+    );
+  }
+
   return (
     <div className="animate-fade-in space-y-2">
       {/* Modernized Help & Quick Start Area */}
@@ -214,7 +233,11 @@ export function ProjectDashboard() {
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div className="flex gap-2 flex-wrap">
                     <Badge variant="outline">{selectedProject.complexity}</Badge>
-                    <Badge variant="outline">{selectedProject.estimatedTime ? selectedProject.estimatedTime : selectedProject.estimatedHours}</Badge>
+                    <Badge variant="outline">
+                      {"estimatedTime" in selectedProject && selectedProject.estimatedTime
+                        ? selectedProject.estimatedTime
+                        : (isOpenSourceProject(selectedProject) && selectedProject.estimatedHours) || ""}
+                    </Badge>
                     <Badge variant="outline">{selectedProject.terragruntModules?.length || 1} modules</Badge>
                   </div>
                   <TooltipProvider>
@@ -235,24 +258,42 @@ export function ProjectDashboard() {
                 </div>
                 {/* More details on selected template */}
                 <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                  <Badge variant="secondary">GitHub: <a href={selectedProject.githubUrl} target="_blank" rel="noopener noreferrer" className="ml-1 underline">{selectedProject.githubUrl.replace(/^https?:\/\//, '')}</a></Badge>
-                  <Badge variant="secondary">{selectedProject.techStack.join(", ")}</Badge>
-                  <Badge variant="secondary">{selectedProject.category}</Badge>
+                  {isOpenSourceProject(selectedProject) && (
+                    <>
+                      <Badge variant="secondary">
+                        GitHub:
+                        <a href={selectedProject.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="ml-1 underline">
+                          {selectedProject.githubUrl.replace(/^https?:\/\//, '')}
+                        </a>
+                      </Badge>
+                      <Badge variant="secondary">{selectedProject.techStack?.join(", ")}</Badge>
+                      <Badge variant="secondary">{selectedProject.category}</Badge>
+                    </>
+                  )}
                 </div>
                 <div className="mt-2">
                   <div className="font-bold text-slate-700 mb-1">Learning Objectives:</div>
                   <ul className="list-disc pl-6 text-slate-600 space-y-1">
-                    {selectedProject.learningObjectives?.map(obj => (
-                      <li key={obj}>{obj}</li>
-                    ))}
+                    {isOpenSourceProject(selectedProject) && selectedProject.learningObjectives
+                      ? selectedProject.learningObjectives.map(obj => (
+                        <li key={obj}>{obj}</li>
+                      ))
+                      : <li>N/A</li>
+                    }
                   </ul>
                 </div>
                 <div className="mt-2">
                   <span className="font-bold text-slate-700">Roles:</span>
                   <div className="inline-flex gap-1 ml-2">
-                    {selectedProject.roles?.map(role => (
-                      <Badge key={role} className="bg-slate-100 text-slate-700 border border-slate-300">{role}</Badge>
-                    ))}
+                    {isOpenSourceProject(selectedProject) && selectedProject.roles
+                      ? selectedProject.roles.map(role => (
+                        <Badge key={role} className="bg-slate-100 text-slate-700 border border-slate-300">{role}</Badge>
+                      ))
+                      : <Badge className="bg-slate-100 text-slate-500 border border-slate-300">N/A</Badge>
+                    }
                   </div>
                 </div>
               </CardContent>
