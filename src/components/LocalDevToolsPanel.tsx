@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Terminal, 
-  Docker, 
+  Dock, 
   GitBranch, 
   Database, 
   Server, 
@@ -154,7 +153,7 @@ networks:
           <Tabs defaultValue="docker" className="w-full">
             <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="docker">
-                <Docker className="w-4 h-4 mr-2" />
+                <Dock className="w-4 h-4 mr-2" />
                 Docker
               </TabsTrigger>
               <TabsTrigger value="git">
@@ -190,7 +189,7 @@ networks:
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <Docker className="w-4 h-4" />
+                          <Dock className="w-4 h-4" />
                           <CardTitle className="text-sm">{service.name}</CardTitle>
                         </div>
                         <Badge className={getStatusColor(service.status)}>
