@@ -1,31 +1,23 @@
+
 import React, { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { 
   Users, 
   Brain, 
-  GitBranch, 
-  Code2, 
-  TestTube, 
-  Shield, 
-  Palette,
-  Database,
-  Settings,
   Play,
-  RefreshCw,
   Zap,
   Workflow,
   Target
 } from "lucide-react";
 import { XPExpandedRoles, expandedXPRoles, type XPRole } from "@/components/XPExpandedRoles";
+import { ProjectSelector } from "@/components/ProjectSelector";
+import { LLMConfigPanel } from "@/components/LLMConfigPanel";
+import { WorkflowSettingsPanel } from "@/components/WorkflowSettingsPanel";
+import { AdvancedSettingsPanel } from "@/components/AdvancedSettingsPanel";
 
 interface LLMConfig {
   provider: 'ollama' | 'llamacpp' | 'openai-compatible';
@@ -50,64 +42,6 @@ interface OpenSourceProject {
 interface EnhancedProjectBuilderProps {
   onProjectGenerate: (config: any) => void;
 }
-
-const openSourceProjects: OpenSourceProject[] = [
-  {
-    id: 'react-todo',
-    name: 'Advanced Todo App',
-    description: 'Feature-rich todo application with real-time sync, drag-and-drop, and team collaboration',
-    githubUrl: 'https://github.com/example/react-todo-advanced',
-    techStack: ['React', 'TypeScript', 'Supabase', 'Tailwind CSS', 'Framer Motion'],
-    complexity: 'Intermediate',
-    category: 'web-app',
-    estimatedHours: '15-25 hours',
-    learningObjectives: ['State management', 'Real-time updates', 'Authentication', 'UI animations']
-  },
-  {
-    id: 'expense-tracker',
-    name: 'Personal Finance Tracker',
-    description: 'Comprehensive expense tracking with budgets, categories, and financial insights',
-    githubUrl: 'https://github.com/example/expense-tracker',
-    techStack: ['React', 'TypeScript', 'Chart.js', 'Supabase', 'PWA'],
-    complexity: 'Advanced',
-    category: 'full-stack',
-    estimatedHours: '30-45 hours',
-    learningObjectives: ['Data visualization', 'Complex state', 'PWA features', 'Financial calculations']
-  },
-  {
-    id: 'blog-platform',
-    name: 'Modern Blog Platform',
-    description: 'Multi-author blog platform with rich text editor, comments, and SEO optimization',
-    githubUrl: 'https://github.com/example/blog-platform',
-    techStack: ['React', 'TypeScript', 'TinyMCE', 'Supabase', 'React Query'],
-    complexity: 'Advanced',
-    category: 'full-stack',
-    estimatedHours: '40-60 hours',
-    learningObjectives: ['Rich text editing', 'SEO optimization', 'Multi-user systems', 'Content management']
-  },
-  {
-    id: 'task-manager',
-    name: 'Team Task Manager',
-    description: 'Kanban-style task management with team collaboration and time tracking',
-    githubUrl: 'https://github.com/example/task-manager',
-    techStack: ['React', 'TypeScript', 'DnD Kit', 'Supabase', 'WebSockets'],
-    complexity: 'Intermediate',
-    category: 'web-app',
-    estimatedHours: '20-35 hours',
-    learningObjectives: ['Drag and drop', 'Real-time collaboration', 'Project management', 'Time tracking']
-  },
-  {
-    id: 'recipe-app',
-    name: 'Recipe Collection App',
-    description: 'Recipe management with meal planning, shopping lists, and nutritional info',
-    githubUrl: 'https://github.com/example/recipe-app',
-    techStack: ['React', 'TypeScript', 'Supabase', 'PWA', 'Camera API'],
-    complexity: 'Beginner',
-    category: 'web-app',
-    estimatedHours: '10-20 hours',
-    learningObjectives: ['CRUD operations', 'Image handling', 'PWA basics', 'Local storage']
-  }
-];
 
 export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBuilderProps) {
   const [selectedProject, setSelectedProject] = useState<OpenSourceProject | null>(null);
@@ -218,77 +152,12 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
         </TabsList>
 
         <TabsContent value="projects" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {openSourceProjects.map(project => (
-              <Card 
-                key={project.id}
-                className={`cursor-pointer transition-all ${
-                  selectedProject?.id === project.id 
-                    ? 'border-purple-500 shadow-lg bg-purple-50' 
-                    : 'hover:shadow-md'
-                }`}
-                onClick={() => setSelectedProject(project)}
-              >
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>{project.name}</span>
-                    <Badge variant={project.complexity === 'Beginner' ? 'secondary' : 
-                           project.complexity === 'Intermediate' ? 'default' : 'destructive'}>
-                      {project.complexity}
-                    </Badge>
-                  </CardTitle>
-                  <CardDescription>{project.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-sm font-medium mb-1">Tech Stack:</p>
-                      <div className="flex flex-wrap gap-1">
-                        {project.techStack.map(tech => (
-                          <Badge key={tech} variant="outline" className="text-xs">{tech}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium mb-1">Learning Objectives:</p>
-                      <ul className="text-xs text-muted-foreground">
-                        {project.learningObjectives.slice(0, 2).map(obj => (
-                          <li key={obj}>• {obj}</li>
-                        ))}
-                        {project.learningObjectives.length > 2 && (
-                          <li>• +{project.learningObjectives.length - 2} more...</li>
-                        )}
-                      </ul>
-                    </div>
-                    <div className="flex justify-between items-center text-sm text-muted-foreground">
-                      <span>⏱️ {project.estimatedHours}</span>
-                      <Badge variant="secondary">{project.category}</Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {selectedProject && (
-            <Card className="border-green-200 bg-green-50">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Badge className="bg-green-600">Selected</Badge>
-                  {selectedProject.name}
-                </CardTitle>
-                <div className="space-y-2">
-                  <Label htmlFor="projectName">Custom Project Name (Optional)</Label>
-                  <Input
-                    id="projectName"
-                    placeholder={selectedProject.name}
-                    value={projectName}
-                    onChange={(e) => setProjectName(e.target.value)}
-                  />
-                </div>
-              </CardHeader>
-            </Card>
-          )}
+          <ProjectSelector
+            selectedProject={selectedProject}
+            projectName={projectName}
+            onProjectSelect={setSelectedProject}
+            onProjectNameChange={setProjectName}
+          />
         </TabsContent>
 
         <TabsContent value="roles" className="space-y-4">
@@ -318,154 +187,24 @@ export function EnhancedProjectBuilder({ onProjectGenerate }: EnhancedProjectBui
         </TabsContent>
 
         <TabsContent value="llm" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Local LLM Configuration</CardTitle>
-              <CardDescription>Configure your local LLM for AI-assisted development</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="provider">LLM Provider</Label>
-                  <Select value={llmConfig.provider} onValueChange={(value: any) => 
-                    setLLMConfig(prev => ({ ...prev, provider: value }))}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ollama">Ollama</SelectItem>
-                      <SelectItem value="llamacpp">LlamaCPP</SelectItem>
-                      <SelectItem value="openai-compatible">OpenAI Compatible</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label htmlFor="endpoint">API Endpoint</Label>
-                  <Input
-                    id="endpoint"
-                    value={llmConfig.endpoint}
-                    onChange={(e) => setLLMConfig(prev => ({ ...prev, endpoint: e.target.value }))}
-                    placeholder="http://localhost:11434"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="model">Model Name</Label>
-                  <Input
-                    id="model"
-                    value={llmConfig.model}
-                    onChange={(e) => setLLMConfig(prev => ({ ...prev, model: e.target.value }))}
-                    placeholder="codellama, deepseek-coder, etc."
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="temperature">Temperature ({llmConfig.temperature})</Label>
-                  <input
-                    type="range"
-                    id="temperature"
-                    min="0"
-                    max="1"
-                    step="0.1"
-                    value={llmConfig.temperature}
-                    onChange={(e) => setLLMConfig(prev => ({ ...prev, temperature: parseFloat(e.target.value) }))}
-                    className="w-full"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <LLMConfigPanel
+            llmConfig={llmConfig}
+            onConfigChange={setLLMConfig}
+          />
         </TabsContent>
 
         <TabsContent value="workflow" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Enhanced Workflow Settings</CardTitle>
-              <CardDescription>Configure advanced workflow optimization features</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="iterationLength">Iteration Length</Label>
-                  <Select value={iterationSettings.iterationLength} onValueChange={(value) => 
-                    setIterationSettings(prev => ({ ...prev, iterationLength: value }))}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="daily">Daily (24h cycles)</SelectItem>
-                      <SelectItem value="weekly">Weekly (7 day sprints)</SelectItem>
-                      <SelectItem value="biweekly">Bi-weekly (14 day sprints)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="workflowOpt">Workflow Optimization</Label>
-                    <Switch
-                      id="workflowOpt"
-                      checked={iterationSettings.workflowOptimization}
-                      onCheckedChange={(checked) => 
-                        setIterationSettings(prev => ({ ...prev, workflowOptimization: checked }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="realTimeTraining">Real-Time Model Training</Label>
-                    <Switch
-                      id="realTimeTraining"
-                      checked={iterationSettings.realTimeTraining}
-                      onCheckedChange={(checked) => 
-                        setIterationSettings(prev => ({ ...prev, realTimeTraining: checked }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="autoReview">Advanced Code Review</Label>
-                    <Switch
-                      id="autoReview"
-                      checked={iterationSettings.autoReview}
-                      onCheckedChange={(checked) => 
-                        setIterationSettings(prev => ({ ...prev, autoReview: checked }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="pairProgramming">Enhanced AI Pair Programming</Label>
-                    <Switch
-                      id="pairProgramming"
-                      checked={iterationSettings.pairProgramming}
-                      onCheckedChange={(checked) => 
-                        setIterationSettings(prev => ({ ...prev, pairProgramming: checked }))}
-                    />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <WorkflowSettingsPanel
+            iterationSettings={iterationSettings}
+            onSettingsChange={setIterationSettings}
+          />
         </TabsContent>
 
         <TabsContent value="advanced" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Advanced Configuration</CardTitle>
-              <CardDescription>Specify additional requirements and constraints</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div>
-                <Label htmlFor="customRequirements">Project-Specific Requirements</Label>
-                <Textarea
-                  id="customRequirements"
-                  placeholder="Describe any specific requirements, architectural constraints, performance goals, or unique features for this project..."
-                  value={customRequirements}
-                  onChange={(e) => setCustomRequirements(e.target.value)}
-                  rows={6}
-                />
-              </div>
-            </CardContent>
-          </Card>
+          <AdvancedSettingsPanel
+            customRequirements={customRequirements}
+            onRequirementsChange={setCustomRequirements}
+          />
         </TabsContent>
       </Tabs>
 
