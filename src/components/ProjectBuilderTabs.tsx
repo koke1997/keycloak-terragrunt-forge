@@ -10,6 +10,9 @@ import { WorkflowSettingsPanel } from "@/components/WorkflowSettingsPanel";
 import { AdvancedSettingsPanel } from "@/components/AdvancedSettingsPanel";
 import { AIAgentManagement } from "@/components/AIAgentManagement";
 import { EnhancedComplianceGenerator } from "@/components/EnhancedComplianceGenerator";
+import { LocalDevToolsPanel } from "@/components/LocalDevToolsPanel";
+import { EnhancedN8NWorkflows } from "@/components/EnhancedN8NWorkflows";
+import { ProjectHealthMonitor } from "@/components/ProjectHealthMonitor";
 
 interface OpenSourceProject {
   id: string;
@@ -66,14 +69,16 @@ export function ProjectBuilderTabs({
 }: ProjectBuilderTabsProps) {
   return (
     <Tabs defaultValue="projects" className="w-full">
-      <TabsList className="grid w-full grid-cols-7">
+      <TabsList className="grid w-full grid-cols-9">
         <TabsTrigger value="projects">Projects</TabsTrigger>
         <TabsTrigger value="roles">Enhanced Roles</TabsTrigger>
         <TabsTrigger value="llm">LLM Config</TabsTrigger>
         <TabsTrigger value="workflow">Workflow</TabsTrigger>
         <TabsTrigger value="agents">AI Agents</TabsTrigger>
         <TabsTrigger value="compliance">Compliance</TabsTrigger>
-        <TabsTrigger value="advanced">Advanced</TabsTrigger>
+        <TabsTrigger value="devtools">Dev Tools</TabsTrigger>
+        <TabsTrigger value="n8n">N8N Workflows</TabsTrigger>
+        <TabsTrigger value="health">Health Monitor</TabsTrigger>
       </TabsList>
 
       <TabsContent value="projects" className="space-y-4">
@@ -136,11 +141,16 @@ export function ProjectBuilderTabs({
         <EnhancedComplianceGenerator />
       </TabsContent>
 
-      <TabsContent value="advanced" className="space-y-4">
-        <AdvancedSettingsPanel
-          customRequirements={customRequirements}
-          onRequirementsChange={onRequirementsChange}
-        />
+      <TabsContent value="devtools" className="space-y-4">
+        <LocalDevToolsPanel />
+      </TabsContent>
+
+      <TabsContent value="n8n" className="space-y-4">
+        <EnhancedN8NWorkflows />
+      </TabsContent>
+
+      <TabsContent value="health" className="space-y-4">
+        <ProjectHealthMonitor />
       </TabsContent>
     </Tabs>
   );
