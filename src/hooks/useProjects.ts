@@ -1,22 +1,37 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Enums } from "@/integrations/supabase/types";
+
+// Types from Supabase enums
+export type ProjectCategory = Enums<"project_category">;
+export type ProjectComplexity = Enums<"project_complexity">;
+export type ProjectRole = Enums<"project_role">;
+export type TechStack = Enums<"tech_stack">;
 
 export interface Project {
   id: string;
   name: string;
   description?: string | null;
   template_id?: string | null;
-  tech_stack?: string[] | null;
-  complexity?: string | null;
-  category?: string | null;
+  tech_stack?: TechStack[] | null;
+  complexity?: ProjectComplexity | null;
+  category?: ProjectCategory | null;
   estimated_hours?: string | null;
-  roles?: string[] | null;
+  roles?: ProjectRole[] | null;
   created_at?: string;
   updated_at?: string;
 }
 
-export type NewProject = Omit<Project, "id" | "created_at" | "updated_at">;
+export type NewProject = {
+  name: string;
+  description?: string | null;
+  template_id?: string | null;
+  tech_stack?: TechStack[] | null;
+  complexity?: ProjectComplexity | null;
+  category?: ProjectCategory | null;
+  estimated_hours?: string | null;
+  roles?: ProjectRole[] | null;
+};
 
 export const fetchProjects = async (): Promise<Project[]> => {
   const { data, error } = await supabase
@@ -36,6 +51,7 @@ export const useProjects = () => {
 
   const createMutation = useMutation({
     mutationFn: async (project: NewProject) => {
+      // Note: Insert expects *specific* enum values, not just any string.
       const { data, error } = await supabase
         .from("projects")
         .insert([project])
@@ -50,7 +66,11 @@ export const useProjects = () => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, ...updates }: Partial<Project> & { id: string }) => {
+    mutationFn: async ({
+      id,
+      ...updates
+    }: Partial<Project> & { id: string }) => {
+      // Type assertion to keep the updates strongly typed
       const { data, error } = await supabase
         .from("projects")
         .update(updates)
