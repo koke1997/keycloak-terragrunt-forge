@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Enums } from "@/integrations/supabase/types";
@@ -89,7 +90,7 @@ export const useProjects = () => {
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("projects").delete().eq("id", id);
       if (error) throw error;
-      return id;
+      return; // Ensures return type is Promise<void>
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
