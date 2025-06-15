@@ -19,6 +19,7 @@ import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/comp
 import { useProjects } from "@/hooks/useProjects";
 import { useState } from "react";
 import { CombineRepositoriesForm } from "@/components/CombineRepositoriesForm";
+import { ElasticGitHubRepoSearch } from "./ElasticGitHubRepoSearch";
 
 // QuickActions remains unchanged
 function QuickActions() {
@@ -203,46 +204,7 @@ export function ProjectDashboard() {
                     <div className="text-muted-foreground mb-3 text-sm line-clamp-2">
                       {project.description || <span className="italic">No description</span>}
                     </div>
-                    <div>
-                      <div className="flex flex-wrap gap-1 mb-1">
-                        {project.tech_stack?.map((ts) => (
-                          <Badge
-                            key={ts}
-                            variant="outline"
-                            className="text-xs cursor-pointer hover:bg-purple-100 hover:text-purple-700 transition-colors"
-                            title={`Filter by ${ts}`}
-                            tabIndex={-1}
-                            // Add your click logic for filter here if desired
-                          >
-                            {ts}
-                          </Badge>
-                        ))}
-                        {project.category && (
-                          <Badge
-                            variant="outline"
-                            className="text-xs bg-slate-100 border-slate-200 text-slate-900"
-                          >
-                            {project.category}
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="flex flex-wrap gap-1 mb-1">
-                        {project.roles?.map((role) => (
-                          <Badge
-                            key={role}
-                            className="bg-slate-100 text-slate-700 border border-slate-300 text-xs cursor-pointer hover:bg-purple-100 hover:text-purple-700"
-                            title={`Filter by ${role}`}
-                            tabIndex={-1}
-                          >
-                            {role}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
                     <div className="flex justify-between items-center mt-3 gap-2">
-                      <div className="text-xs flex items-center gap-1 text-muted-foreground">
-                        ⏱️ {project.estimated_hours || "?"}
-                      </div>
                       <Button
                         variant="outline"
                         size="sm"
@@ -250,7 +212,6 @@ export function ProjectDashboard() {
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedProjectId(project.id);
-                          // Open a "details" modal or navigate, or just visually highlight for now.
                           toast({
                             title: `Project: ${project.name}`,
                             description: project.description || "",
@@ -288,7 +249,10 @@ export function ProjectDashboard() {
         )}
       </div>
 
-      {/* Replace the old CombineReposServiceCard with the OOP-powered form */}
+      {/* Elastic GitHub repo search UI -- NEW */}
+      <ElasticGitHubRepoSearch />
+
+      {/* Combine Repos Section stays */}
       <CombineRepositoriesForm />
 
       <Tabs defaultValue="xp" className="w-full animate-fade-in">
