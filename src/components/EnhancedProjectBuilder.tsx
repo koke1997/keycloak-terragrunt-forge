@@ -27,18 +27,6 @@ import {
 } from "lucide-react";
 import { XPExpandedRoles, expandedXPRoles, type XPRole } from "@/components/XPExpandedRoles";
 
-interface XPRole {
-  id: string;
-  name: string;
-  description: string;
-  icon: React.ReactNode;
-  responsibilities: string[];
-  keySkills: string[];
-  toolsUsed: string[];
-  aiPrompt: string;
-  color: string;
-}
-
 interface LLMConfig {
   provider: 'ollama' | 'llamacpp' | 'openai-compatible';
   endpoint: string;
@@ -62,75 +50,6 @@ interface OpenSourceProject {
 interface EnhancedProjectBuilderProps {
   onProjectGenerate: (config: any) => void;
 }
-
-const xpRoles: XPRole[] = [
-  {
-    id: 'customer',
-    name: 'Customer/Product Owner',
-    description: 'Defines requirements and priorities',
-    icon: <Users className="w-4 h-4" />,
-    responsibilities: ['Define user stories', 'Set priorities', 'Accept deliverables', 'Provide feedback'],
-    keySkills: ['Communication', 'Project Management', 'User Research'],
-    toolsUsed: ['Jira', 'Trello', 'Slack'],
-    aiPrompt: 'You are a product owner focused on user needs and business value. Prioritize features based on user impact.',
-    color: 'bg-blue-100 text-blue-800'
-  },
-  {
-    id: 'developer',
-    name: 'Developer',
-    description: 'Implements code and technical solutions',
-    icon: <Code2 className="w-4 h-4" />,
-    responsibilities: ['Write clean code', 'Implement features', 'Code reviews', 'Technical decisions'],
-    keySkills: ['Programming', 'Problem Solving', 'Version Control'],
-    toolsUsed: ['Git', 'VSCode', 'Jira'],
-    aiPrompt: 'You are a senior developer focused on clean, maintainable code and best practices.',
-    color: 'bg-green-100 text-green-800'
-  },
-  {
-    id: 'tester',
-    name: 'Tester/QA',
-    description: 'Ensures quality and finds issues',
-    icon: <TestTube className="w-4 h-4" />,
-    responsibilities: ['Write test cases', 'Find bugs', 'Quality assurance', 'User acceptance testing'],
-    keySkills: ['Testing', 'Debugging', 'Automation'],
-    toolsUsed: ['Jest', 'Selenium', 'Postman'],
-    aiPrompt: 'You are a QA engineer focused on finding edge cases and ensuring robust, reliable software.',
-    color: 'bg-red-100 text-red-800'
-  },
-  {
-    id: 'designer',
-    name: 'Designer/UX',
-    description: 'Creates user experience and interface',
-    icon: <Palette className="w-4 h-4" />,
-    responsibilities: ['UI/UX design', 'User research', 'Wireframes', 'Design systems'],
-    keySkills: ['Design', 'Accessibility', 'User Experience'],
-    toolsUsed: ['Figma', 'Adobe XD', 'InVision'],
-    aiPrompt: 'You are a UX/UI designer focused on user-centered design and accessibility.',
-    color: 'bg-purple-100 text-purple-800'
-  },
-  {
-    id: 'architect',
-    name: 'Technical Architect',
-    description: 'Designs system architecture and patterns',
-    icon: <Database className="w-4 h-4" />,
-    responsibilities: ['System design', 'Architecture decisions', 'Performance optimization', 'Scalability'],
-    keySkills: ['Architecture', 'Scalability', 'Performance'],
-    toolsUsed: ['Docker', 'Kubernetes', 'AWS'],
-    aiPrompt: 'You are a technical architect focused on scalable, maintainable system design.',
-    color: 'bg-orange-100 text-orange-800'
-  },
-  {
-    id: 'security',
-    name: 'Security Engineer',
-    description: 'Ensures security best practices',
-    icon: <Shield className="w-4 h-4" />,
-    responsibilities: ['Security review', 'Vulnerability assessment', 'Compliance', 'Best practices'],
-    keySkills: ['Security', 'Compliance', 'Vulnerability'],
-    toolsUsed: ['Nessus', 'OpenVAS', 'OWASP'],
-    aiPrompt: 'You are a security engineer focused on identifying and mitigating security risks.',
-    color: 'bg-yellow-100 text-yellow-800'
-  }
-];
 
 const openSourceProjects: OpenSourceProject[] = [
   {
