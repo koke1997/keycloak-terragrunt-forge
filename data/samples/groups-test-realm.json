@@ -1,0 +1,191 @@
+{
+  "id": "groups-test-realm",
+  "realm": "groups-test-realm",
+  "displayName": "Groups Test Realm",
+  "enabled": true,
+  "registrationAllowed": true,
+  "rememberMe": true,
+  "verifyEmail": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "sslRequired": "none",
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "offlineSessionIdleTimeout": 2592000,
+  "offlineSessionMaxLifespan": 5184000,
+  "offlineSessionMaxLifespanEnabled": false,
+  "accessCodeLifespan": 60,
+  "accessCodeLifespanUserAction": 300,
+  "accessCodeLifespanLogin": 1800,
+  "actionTokenGeneratedByAdminLifespan": 43200,
+  "actionTokenGeneratedByUserLifespan": 300,
+  "revokeRefreshToken": false,
+  "refreshTokenMaxReuse": 0,
+  "roles": {
+    "realm": [
+      {
+        "id": "admin-role-id",
+        "name": "admin",
+        "description": "Administrator role",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "id": "manager-role-id", 
+        "name": "manager",
+        "description": "Manager role",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "id": "employee-role-id",
+        "name": "employee", 
+        "description": "Employee role",
+        "composite": false,
+        "clientRole": false
+      }
+    ]
+  },
+  "groups": [
+    {
+      "id": "admin-group-id",
+      "name": "administrators",
+      "path": "/administrators",
+      "attributes": {
+        "department": ["IT"],
+        "level": ["senior"]
+      },
+      "realmRoles": ["admin"],
+      "subGroups": []
+    },
+    {
+      "id": "hr-group-id", 
+      "name": "human-resources",
+      "path": "/human-resources",
+      "attributes": {
+        "department": ["HR"],
+        "level": ["management"]
+      },
+      "realmRoles": ["manager"],
+      "subGroups": [
+        {
+          "id": "hr-managers-id",
+          "name": "hr-managers", 
+          "path": "/human-resources/hr-managers",
+          "attributes": {
+            "level": ["senior"]
+          },
+          "realmRoles": ["manager"],
+          "subGroups": []
+        },
+        {
+          "id": "hr-staff-id",
+          "name": "hr-staff",
+          "path": "/human-resources/hr-staff", 
+          "attributes": {
+            "level": ["junior"]
+          },
+          "realmRoles": ["employee"],
+          "subGroups": []
+        }
+      ]
+    },
+    {
+      "id": "engineering-group-id",
+      "name": "engineering",
+      "path": "/engineering", 
+      "attributes": {
+        "department": ["Engineering"],
+        "level": ["technical"]
+      },
+      "realmRoles": ["employee"],
+      "subGroups": [
+        {
+          "id": "frontend-team-id",
+          "name": "frontend-team",
+          "path": "/engineering/frontend-team",
+          "attributes": {
+            "stack": ["react", "typescript"]
+          },
+          "realmRoles": ["employee"],
+          "subGroups": []
+        },
+        {
+          "id": "backend-team-id", 
+          "name": "backend-team",
+          "path": "/engineering/backend-team",
+          "attributes": {
+            "stack": ["node", "postgres"]
+          },
+          "realmRoles": ["employee"],
+          "subGroups": []
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin-user",
+      "enabled": true,
+      "email": "admin@company.com",
+      "firstName": "System",
+      "lastName": "Administrator",
+      "groups": ["/administrators"],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "hr-manager",
+      "enabled": true, 
+      "email": "hrmanager@company.com",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "groups": ["/human-resources/hr-managers"],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "manager123",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "developer",
+      "enabled": true,
+      "email": "dev@company.com", 
+      "firstName": "John",
+      "lastName": "Developer",
+      "groups": ["/engineering/frontend-team"],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "dev123",
+          "temporary": false
+        }
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "company-portal",
+      "name": "Company Portal", 
+      "description": "Internal company portal",
+      "enabled": true,
+      "publicClient": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "redirectUris": ["https://portal.company.com/*"],
+      "webOrigins": ["https://portal.company.com"]
+    }
+  ]
+}

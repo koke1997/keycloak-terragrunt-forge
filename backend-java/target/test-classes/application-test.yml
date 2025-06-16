@@ -1,0 +1,65 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: password
+    driver-class-name: org.h2.Driver
+    hikari:
+      maximum-pool-size: 1
+      minimum-idle: 0
+      connection-timeout: 5000
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: false
+
+  cache:
+    type: simple
+
+  h2:
+    console:
+      enabled: false
+
+server:
+  port: 0  # Random port for tests
+
+logging:
+  level:
+    com.keycloak.forge: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+    org.springframework.test: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Test-specific configuration
+app:
+  cors:
+    allowed-origins:
+      - "*"
+  cache:
+    enabled: false
+    default-ttl: 60
+  security:
+    jwt:
+      enabled: false
+    rate-limit:
+      enabled: false
+  conversion:
+    max-file-size: 100MB
+    timeout: 60000  # 1 minute for tests
+    batch-size: 100
+
+# Mock Keycloak configuration for tests
+keycloak:
+  auth-server-url: http://localhost:8090
+  admin:
+    username: test-admin
+    password: test-password
+    client-id: admin-cli
+    realm: master

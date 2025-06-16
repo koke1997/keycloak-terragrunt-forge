@@ -1,0 +1,40 @@
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  application:
+    name: keycloak-terragrunt-forge
+
+  main:
+    lazy-initialization: false
+
+server:
+  port: ${SERVER_PORT:8080}
+
+# Default Keycloak configuration (overridden by profile-specific configs)
+keycloak:
+  auth-server-url: ${KEYCLOAK_URL:http://localhost:8090}
+  admin:
+    username: ${KEYCLOAK_ADMIN_USERNAME:admin}
+    password: ${KEYCLOAK_ADMIN_PASSWORD:admin}
+    client-id: admin-cli
+    realm: master
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# Logging configuration
+logging:
+  level:
+    com.keycloak.forge: INFO
+    org.springframework: WARN
+    org.keycloak: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %5p [%t] %-40.40logger{39} : %msg%n"

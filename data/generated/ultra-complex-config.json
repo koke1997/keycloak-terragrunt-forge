@@ -1,0 +1,75 @@
+{
+    "users": {
+        "count": 100,
+        "generateCredentials": true,
+        "generateAttributes": true,
+        "generateFederatedIdentities": true,
+        "assignToGroups": true,
+        "generateRoleMappings": true
+    },
+    "groups": {
+        "count": 50,
+        "maxDepth": 8,
+        "generateAttributes": true,
+        "generateSubGroups": true,
+        "generateMembers": true,
+        "generateRoleMappings": true,
+        "generateClientRoles": true,
+        "generateAdvancedAttributes": true,
+        "generateGroupHierarchies": true,
+        "generateCrossCompanyGroups": true,
+        "generateTemporaryGroups": true,
+        "generateSecurityGroups": true,
+        "generateProjectGroups": true,
+        "generateLocationGroups": true,
+        "generateComplianceGroups": true,
+        "generateVirtualTeams": true,
+        "generateMatrixOrganization": true
+    },
+    "roles": {
+        "realmRoles": 50,
+        "clientRoles": 40,
+        "generateComposites": true,
+        "generateAttributes": true,
+        "generatePermissions": true
+    },
+    "clients": {
+        "count": 20,
+        "generateScopes": true,
+        "generateMappers": true,
+        "generateClientRoles": true,
+        "generateServiceAccounts": true,
+        "generateProtocolMappers": true
+    },
+    "identityProviders": {
+        "count": 12,
+        "types": [
+            "oidc",
+            "saml",
+            "github",
+            "google",
+            "facebook",
+            "linkedin",
+            "microsoft",
+            "apple",
+            "okta",
+            "auth0"
+        ]
+    },
+    "authenticationFlows": {
+        "count": 15,
+        "generateCustomExecutors": true,
+        "generateConditionalFlows": true
+    },
+    "features": {
+        "addBruteForceProtection": true,
+        "addPasswordPolicy": true,
+        "addOtpPolicy": true,
+        "addWebAuthnPolicy": true,
+        "addClientPolicies": true,
+        "addEvents": true,
+        "addInternationalization": true,
+        "addAdvancedSecurity": true,
+        "addComplexAttributes": true
+    }
+}

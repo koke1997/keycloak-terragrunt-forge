@@ -1,0 +1,15 @@
+/app/src/main/java/com/keycloak/forge/model/ConversionResult.java
+/app/src/main/java/com/keycloak/forge/controller/ValidationController.java
+/app/src/main/java/com/keycloak/forge/controller/ConversionController.java
+/app/src/main/java/com/keycloak/forge/service/KeycloakService.java
+/app/src/main/java/com/keycloak/forge/config/AppConfig.java
+/app/src/main/java/com/keycloak/forge/KeycloakForgeApplication.java
+/app/src/main/java/com/keycloak/forge/config/KeycloakConfig.java
+/app/src/main/java/com/keycloak/forge/model/RealmAnalysis.java
+/app/src/main/java/com/keycloak/forge/service/ValidationService.java
+/app/src/main/java/com/keycloak/forge/service/TerraformGeneratorService.java
+/app/src/main/java/com/keycloak/forge/controller/GlobalExceptionHandler.java
+/app/src/main/java/com/keycloak/forge/model/ConversionRequest.java
+/app/src/main/java/com/keycloak/forge/config/SecurityConfig.java
+/app/src/main/java/com/keycloak/forge/model/ValidationResult.java
+/app/src/main/java/com/keycloak/forge/model/RoundTripValidation.java

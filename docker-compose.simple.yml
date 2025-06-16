@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  # React TypeScript Frontend
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: keycloak-forge-frontend
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8080
+    depends_on:
+      - backend
+    networks:
+      - keycloak-forge-network
+
+  # Java Spring Boot Backend
+  backend:
+    build:
+      context: ./backend-java
+      dockerfile: Dockerfile.simple
+    container_name: keycloak-forge-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DATABASE_URL=jdbc:postgresql://postgres:5432/keycloak_forge
+      - DATABASE_USERNAME=forge_user
+      - DATABASE_PASSWORD=forge_password
+      - KEYCLOAK_URL=http://keycloak:8080
+      - KEYCLOAK_ADMIN_USERNAME=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    depends_on:
+      - postgres
+      - keycloak
+    networks:
+      - keycloak-forge-network
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: keycloak-forge-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: keycloak_forge
+      POSTGRES_USER: forge_user
+      POSTGRES_PASSWORD: forge_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - keycloak-forge-network
+
+  # Keycloak Server (for testing and validation)
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0.0
+    container_name: keycloak-forge-keycloak
+    ports:
+      - "8090:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: forge_user
+      KC_DB_PASSWORD: forge_password
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_HTTP_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
+    command: 
+      - start-dev
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./data/samples:/opt/keycloak/data/import
+    depends_on:
+      - postgres
+    networks:
+      - keycloak-forge-network
+
+volumes:
+  postgres_data:
+  keycloak_data:
+
+networks:
+  keycloak-forge-network:
+    driver: bridge

@@ -1,0 +1,51 @@
+{
+    "users": {
+        "count": 75,
+        "generateCredentials": true,
+        "generateAttributes": true,
+        "generateFederatedIdentities": true
+    },
+    "groups": {
+        "count": 20,
+        "maxDepth": 5,
+        "generateAttributes": true,
+        "generateSubGroups": true
+    },
+    "roles": {
+        "realmRoles": 35,
+        "clientRoles": 30,
+        "generateComposites": true
+    },
+    "clients": {
+        "count": 15,
+        "generateScopes": true,
+        "generateMappers": true,
+        "generateClientRoles": true
+    },
+    "identityProviders": {
+        "count": 8,
+        "types": [
+            "oidc",
+            "saml",
+            "github",
+            "google",
+            "facebook",
+            "linkedin",
+            "microsoft",
+            "apple"
+        ]
+    },
+    "authenticationFlows": {
+        "count": 12,
+        "generateCustomExecutors": true
+    },
+    "features": {
+        "addBruteForceProtection": true,
+        "addPasswordPolicy": true,
+        "addOtpPolicy": true,
+        "addWebAuthnPolicy": true,
+        "addClientPolicies": true,
+        "addEvents": true,
+        "addInternationalization": true
+    }
+}

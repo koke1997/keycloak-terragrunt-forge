@@ -1,0 +1,51 @@
+{
+  "timestamp": "2025-06-15T16:07:56.996Z",
+  "projectStructure": {
+    "valid": true,
+    "archivedOldStructure": true,
+    "newTerragruntStructure": true
+  },
+  "terragruntGeneration": {
+    "realmsProcessed": 2,
+    "successRate": "100%",
+    "totalComponents": 15
+  },
+  "modules": {
+    "available": 5,
+    "dependencies": {
+      "keycloak-realm": [],
+      "keycloak-groups": [
+        "keycloak-realm",
+        "keycloak-roles"
+      ],
+      "keycloak-users": [
+        "keycloak-realm",
+        "keycloak-groups"
+      ],
+      "keycloak-roles": [
+        "keycloak-realm"
+      ],
+      "keycloak-clients": [
+        "keycloak-realm"
+      ]
+    }
+  },
+  "frontend": {
+    "restructured": true,
+    "available": true
+  },
+  "backend": {
+    "java": {
+      "available": true,
+      "files": 3
+    },
+    "go": {
+      "available": false,
+      "status": "planned"
+    }
+  },
+  "testing": {
+    "samples": 2,
+    "pipeline": "functional"
+  }
+}

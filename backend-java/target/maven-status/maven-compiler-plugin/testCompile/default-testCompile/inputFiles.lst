@@ -1,0 +1,4 @@
+/app/src/test/java/com/keycloak/forge/service/TerraformGeneratorServiceTest.java
+/app/src/test/java/com/keycloak/forge/service/TerraformGeneratorPerformanceTest.java
+/app/src/test/java/com/keycloak/forge/service/TerraformModuleGenerationTest.java
+/app/src/test/java/com/keycloak/forge/utils/TestDataFactory.java

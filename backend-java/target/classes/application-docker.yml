@@ -1,0 +1,87 @@
+spring:
+  
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://postgres:5432/keycloak_forge}
+    username: ${DATABASE_USERNAME:forge_user}
+    password: ${DATABASE_PASSWORD:forge_password}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+
+  cache:
+    type: simple  # Use simple in-memory cache instead of Redis for now
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  health:
+    db:
+      enabled: true
+    redis:
+      enabled: true
+
+logging:
+  level:
+    com.keycloak.forge: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# Keycloak configuration
+keycloak:
+  auth-server-url: ${KEYCLOAK_URL:http://keycloak:8080}
+  admin:
+    username: ${KEYCLOAK_ADMIN_USERNAME:admin}
+    password: ${KEYCLOAK_ADMIN_PASSWORD:admin}
+    client-id: admin-cli
+    realm: master
+
+# Application configuration
+app:
+  cors:
+    allowed-origins: 
+      - http://localhost:3000
+      - http://frontend:80
+      - http://nginx:80
+  cache:
+    enabled: true
+    default-ttl: 3600
+  security:
+    jwt:
+      enabled: false  # Disabled for development
+    rate-limit:
+      enabled: true
+      requests-per-minute: 60
+  conversion:
+    max-file-size: 50MB
+    timeout: 300000  # 5 minutes
+    batch-size: 10
